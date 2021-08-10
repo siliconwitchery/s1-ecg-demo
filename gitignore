@@ -1,0 +1,5 @@
+.DS_Store
+kicad-proj/*.bck
+kicad-proj/*.sch-bak
+kicad-proj/*.kicad_pcb-bak
+kicad-proj/fp-info-cache
