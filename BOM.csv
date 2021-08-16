@@ -7,7 +7,7 @@ Part Name,Part Number,Vendor,Designator,Footprint,Quantity,Unit Cost,Total Cost,
 1uF Ceramic Cap X5R,CC0201KRX5R5BB105,YAGEO,C7,201,1,0.86,0.86,Digikey: 311-3471-1-ND
 LED,IN-S63AT5UW,Inolux,"D1, D2, D3, D4, D5, D6, D7 ",603,7,2.93,20.51,Digikey: 1830-1063-1-ND
 USB-C-16-Pin,DX07S016JA1R1500,JAE Electronics,J1,,1,13.72,13.72,Digikey: 670-DX07S016JA1R1500CT-ND
-Battery Port,S2B-PH-SM4-TB,JST,"J3, J4",,2,4.57,9.14,Digikey: 455-1749-1-ND
+Battery Port,GREC002SBSN-M89RC,JST,"J3, J4",,2,,,Digikey: S1113EC-02-ND 
 5.1k Resistor,ERJ-1GNF5101C,Panasonic Electronic Components,"R1, R2",201,2,0.86,1.72,Digikey: P123051CT-ND
 665R Resistor,ERJ-1GNF6650C,Panasonic Electronic Components,"R3, R17, R18, R19, R20, R21, R22",201,1,0.86,0.86,Digikey: P123119CT-ND 
 100k Resistor,RC0201FR-07100KL,YAGEO,"R4, R8, R23",201,3,0.86,2.58,Digikey: 311-100KMCT-ND 
