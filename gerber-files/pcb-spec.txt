@@ -1,0 +1,37 @@
+----------------------------------------------------------------------
+                            PCB specifications
+----------------------------------------------------------------------
+Board type:             HDI
+Total Dimension:        80.2 x 30.2 mm
+Copper Layers:          4
+Material:               TG-150 FR4
+Board Thickness:        2mm
+Min track / spacing:    3mil / 3mil
+Min hole size:          0.3mm
+Soldermask Color:       Black
+Silkscreen:             White
+Surface Finish:         ENIG RoHS
+Outside opper Weight:   1oz
+Inside opper Weight:    1oz
+Plated via in pad:      Yes
+
+-----------------------------------------------------------------------
+                            Board Stackup
+-----------------------------------------------------------------------
+Copper      Layer                           Filename
+-----------------------------------------------------------------------
+            Front paste                     s1-ecg-demo-F_Paste.gbr
+            Front silk                      s1-ecg-demo-F_SilkS.gbr
+            Front mask                      s1-ecg-demo-F_Mask.gbr
+1           Front copper                    s1-ecg-demo-F_Cu.gbr
+            Laser drill 1-2                 s1-ecg-demo-front-in1.drl
+2           Front inner copper              s1-ecg-demo-In1_Cu.gbr
+3           Back inner copper               s1-ecg-demo-In2_Cu.gbr
+4           Back copper                     s1-ecg-demo-B_Cu.gbr
+            Back mask                       s1-ecg-demo-B_Mask.gbr
+            Back silk                       s1-ecg-demo-B_SilkS.gbr
+            
+            Drill plated through hole       s1-ecg-demo-PTH.drl
+            Drill non-plated through hole   s1-ecg-demo-NPTH.drl
+            Milling                         s1-ecg-demo-Edge_Cuts.gbr
+
