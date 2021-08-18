@@ -12,3 +12,6 @@ kicad-proj/fp-info-cache
 *.out
 firmware/.build
 firmware/.vscode/tasks.json
+firmware/.vscode/.cortex-debug.peripherals.state.json
+firmware/.vscode/.cortex-debug.registers.state.json
+firmware/.vscode/launch.json

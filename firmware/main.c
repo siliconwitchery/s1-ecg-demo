@@ -1,5 +1,5 @@
 /**
- * @file  s1-thermal-cam/main.c
+ * @file  s1-ecg-demo/main.c
  * @brief Simple FPGA blinky Application running on S1
  *        
  *        Includes basic configuration of the S1 module, and
@@ -44,8 +44,10 @@
 #define SPI_CLK_PIN NRF_GPIO_PIN_MAP(0, 15)
 
 static const nrfx_spim_t spi = NRFX_SPIM_INSTANCE(0);
+static nrf_saadc_value_t m_buffer;
 
 APP_TIMER_DEF(fpga_boot_task_id);
+APP_TIMER_DEF(adc_task_id);
 
 typedef enum
 {
@@ -129,6 +131,14 @@ static void fpga_boot_task(void *p_context)
     }
 }
 
+/**
+ * @brief Timer based function for ADC read
+ */
+static void adc_task(void *p_context)
+{
+    UNUSED_PARAMETER(p_context);
+}
+
 static void fpga_tx_rx(uint8_t *tx_buffer, size_t tx_len,
                        uint8_t *rx_buffer, size_t rx_len)
 {
@@ -181,6 +191,14 @@ int main(void)
 
     APP_ERROR_CHECK(app_timer_start(fpga_boot_task_id,
                                     APP_TIMER_TICKS(5),
+                                    NULL));
+
+    APP_ERROR_CHECK(app_timer_create(&adc_task_id,
+                                     APP_TIMER_MODE_REPEATED,
+                                     adc_task));
+
+    APP_ERROR_CHECK(app_timer_start(adc_task_id,
+                                    APP_TIMER_TICKS(100),
                                     NULL));
 
     // The CPU is free to do nothing in the meanwhile

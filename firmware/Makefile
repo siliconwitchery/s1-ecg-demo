@@ -41,7 +41,7 @@ $(shell touch main.c)
 # project by calling "make build-verlog".
 
 
-TARGETS          := ecg-demo
+TARGETS          := s1-ecg-demo
 OUTPUT_DIRECTORY := .build
 
 # Source files common to all targets
@@ -113,6 +113,7 @@ OPT += -g3 # Debugging information
 
 # C flags common to all targets
 CFLAGS += $(OPT)
+#CFLAGS += -DDEBUG
 CFLAGS += -DAPP_TIMER_V2
 CFLAGS += -DAPP_TIMER_V2_RTC1_ENABLED
 CFLAGS += -DFLOAT_ABI_SOFT
@@ -147,10 +148,10 @@ LDFLAGS += -Wl,--gc-sections # let linker dump unused sections
 LDFLAGS += --specs=nano.specs # use newlib in nano version
 LDFLAGS += -u _printf_float # required to print floats
 
-ecg-demo: CFLAGS += -D__HEAP_SIZE=2048
-ecg-demo: CFLAGS += -D__STACK_SIZE=2048
-ecg-demo: ASMFLAGS += -D__HEAP_SIZE=2048
-ecg-demo: ASMFLAGS += -D__STACK_SIZE=2048
+s1-ecg-demo: CFLAGS += -D__HEAP_SIZE=2048
+s1-ecg-demo: CFLAGS += -D__STACK_SIZE=2048
+s1-ecg-demo: ASMFLAGS += -D__HEAP_SIZE=2048
+s1-ecg-demo: ASMFLAGS += -D__STACK_SIZE=2048
 
 # Add standard libraries at the very end of the linker input, after all objects
 # that may need symbols provided by these libraries.
@@ -165,11 +166,11 @@ $(foreach target, $(TARGETS), $(call define_target, $(target)))
 .PHONY: default flash erase reset help
 
 # Run "make" to build the project
-default: ecg-demo
+default: s1-ecg-demo
 
 # Run "make flash" to build and flash the project
-flash: ecg-demo
-	nrfjprog -f nrf52 --program $(OUTPUT_DIRECTORY)/ecg-demo.hex --sectorerase -r
+flash: s1-ecg-demo
+	nrfjprog -f nrf52 --program $(OUTPUT_DIRECTORY)/s1-ecg-demo.hex --sectorerase -r
 
 # "make erase" fully erase the nRF52811 chip
 erase:
