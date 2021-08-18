@@ -17,9 +17,14 @@
 # to ensure compatibity when copying makefiles from an nRF
 # project.
 
+SDK_ROOT ?= ../..
 S1_SDK_ROOT ?= ../..
 VERILOG_ROOT ?= ../..
 TOP ?= ../..
+GNU_INSTALL_ROOT ?= ../..
+GNU_VERSION ?= ../..
+GNU_PREFIX ?= ../..
+
 include $(S1_SDK_ROOT)/s1.mk
 
 # In this project we always for recomple on main.c to
@@ -36,7 +41,7 @@ $(shell touch main.c)
 # project by calling "make build-verlog".
 
 
-TARGETS          := thermal-cam-demo
+TARGETS          := ecg-demo
 OUTPUT_DIRECTORY := .build
 
 # Source files common to all targets
@@ -142,10 +147,10 @@ LDFLAGS += -Wl,--gc-sections # let linker dump unused sections
 LDFLAGS += --specs=nano.specs # use newlib in nano version
 LDFLAGS += -u _printf_float # required to print floats
 
-thermal-cam-demo: CFLAGS += -D__HEAP_SIZE=2048
-thermal-cam-demo: CFLAGS += -D__STACK_SIZE=2048
-thermal-cam-demo: ASMFLAGS += -D__HEAP_SIZE=2048
-thermal-cam-demo: ASMFLAGS += -D__STACK_SIZE=2048
+ecg-demo: CFLAGS += -D__HEAP_SIZE=2048
+ecg-demo: CFLAGS += -D__STACK_SIZE=2048
+ecg-demo: ASMFLAGS += -D__HEAP_SIZE=2048
+ecg-demo: ASMFLAGS += -D__STACK_SIZE=2048
 
 # Add standard libraries at the very end of the linker input, after all objects
 # that may need symbols provided by these libraries.
@@ -160,11 +165,11 @@ $(foreach target, $(TARGETS), $(call define_target, $(target)))
 .PHONY: default flash erase reset help
 
 # Run "make" to build the project
-default: thermal-cam-demo
+default: ecg-demo
 
 # Run "make flash" to build and flash the project
-flash: thermal-cam-demo
-	nrfjprog -f nrf52 --program $(OUTPUT_DIRECTORY)/thermal-cam-demo.hex --sectorerase -r
+flash: ecg-demo
+	nrfjprog -f nrf52 --program $(OUTPUT_DIRECTORY)/ecg-demo.hex --sectorerase -r
 
 # "make erase" fully erase the nRF52811 chip
 erase:
@@ -181,24 +186,6 @@ sdk_config:
 # "make build-verilog" will build the fpga project.
 # Ensure you have apio installed from here:
 # (https://github.com/FPGAwars/apio)
-build-verilog-apio:
-	# Build the FPGA project using APIO
-	# If you dont have it, get it here:
-	# https://github.com/FPGAwars/apio
-	cd $(VERILOG_ROOT) && apio build
-
-	# Use xxd to convert the bin into a c
-	# header file. The file name becomes
-	# the C variable name, so we must
-	# change the name from "hardware" to
-	# "fpga_blinky_bin".
-	mv $(VERILOG_ROOT)/hardware.bin $(VERILOG_ROOT)/fpga_binfile.bin
-	cd $(VERILOG_ROOT) && xxd -i fpga_binfile.bin fpga_binfile.h.old
-
-	# Then we want the FPGA binary array
-	# stored in flash, so we append it
-	# with "const" using the sed tool.
-	sed '1s/^/const /' $(VERILOG_ROOT)/fpga_binfile.h.old > fpga_binfile.h
 
 build-verilog:
 	cd $(VERILOG_ROOT) && yosys -p "synth_ice40 -json hardware.json" $(TOP).v -q

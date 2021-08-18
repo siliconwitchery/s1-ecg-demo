@@ -2,3 +2,6 @@
 	path = kicad-proj/s1-module-lib
 	url = https://github.com/siliconwitchery/s1-module-kicad-library.git
 
+[submodule "firmware/s1-sdk"]
+	path = firmware/s1-sdk
+	url = https://github.com/siliconwitchery/s1-sdk.git

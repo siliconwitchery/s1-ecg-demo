@@ -11,3 +11,4 @@ kicad-proj/fp-info-cache
 *.vcd
 *.out
 firmware/.build
+firmware/.vscode/tasks.json

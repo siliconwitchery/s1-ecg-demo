@@ -2,9 +2,9 @@
 //
 // These are shortcuts for command line calls for building
 // or doing other useful "tasks" such as clean or erasinig.
-// By pressing Ctrl-Shift-B, or Cmd-Shift-B on MacOS, you 
+// By pressing Ctrl-Shift-B, or Cmd-Shift-B on MacOS, you
 // will run the default make task shown below. By pressing
-// Ctrl-Shift-P, or Cmd-Shift-P, and typing "Run Task", you 
+// Ctrl-Shift-P, or Cmd-Shift-P, and typing "Run Task", you
 // can select other tasks.
 //
 //
@@ -19,7 +19,11 @@
             "args": [
                 //"-j4", // For faster builds, set the number to your CPU core count
                 "flash",
-                "S1_SDK_ROOT=${HOME}"
+                "S1_SDK_ROOT=${workspaceFolder}/s1-sdk",
+                "SDK_ROOT=${HOME}/nRF5_SDK_17.0.2_d674dde",
+                "GNU_INSTALL_ROOT=${HOME}/gcc-arm-none-eabi-10-2020-q4-major/bin/",
+                "GNU_VERSION=10.2.1",
+                "GNU_PREFIX=arm-none-eabi"
             ],
             "problemMatcher": "$gcc",
             "group": {
@@ -32,27 +36,33 @@
             "command": "make",
             "args": [
                 //"-j4", // For faster builds, set the number to your CPU core count
-                "S1_SDK_ROOT=${HOME}"
+                "S1_SDK_ROOT=${workspaceFolder}/s1-sdk",
+                "SDK_ROOT=${HOME}/nRF5_SDK_17.0.2_d674dde",
+                "GNU_INSTALL_ROOT=${HOME}/gcc-arm-none-eabi-10-2020-q4-major/bin/",
+                "GNU_VERSION=10.2.1",
+                "GNU_PREFIX=arm-none-eabi"
             ],
-            "problemMatcher": "$gcc",
+            "problemMatcher": "$gcc"
         },
         {
-            "label": "Build verilog project [APIO]",
+            "label": "Build verilog project",
             "command": "make",
             "args": [
-                "build-verilog-apio",
-                "S1_SDK_ROOT=${HOME}",
-                "VERILOG_ROOT=${HOME}"
+                "build-verilog",
+                "S1_SDK_ROOT=${workspaceFolder}/s1-sdk",
+                "VERILOG_ROOT=${workspaceFolder}/verilog/blinky",
+                "TOP=blinky"
             ],
             "problemMatcher": []
         },
         {
-            "label": "Build verilog project [MIGEN]",
+            "label": "Simulate verilog project",
             "command": "make",
             "args": [
-                "build-verilog-migen",
-                "S1_SDK_ROOT=${HOME}",
-                "VERILOG_ROOT=${HOME}"
+                "sim-verilog",
+                "S1_SDK_ROOT=${HOME}/Documents/SW/s1-sdk",
+                "VERILOG_ROOT=${workspaceFolder}/verilog/blinky",
+                "TOP=blinky"
             ],
             "problemMatcher": []
         },
