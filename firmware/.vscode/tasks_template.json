@@ -19,7 +19,7 @@
             "args": [
                 //"-j4", // For faster builds, set the number to your CPU core count
                 "flash",
-                "S1_SDK_ROOT=${workspaceFolder}/s1-sdk",
+                "S1_SDK_ROOT=${workspaceFolder}/firmware/s1-sdk",
                 "SDK_ROOT=${HOME}/nRF5_SDK_17.0.2_d674dde",
                 "GNU_INSTALL_ROOT=${HOME}/gcc-arm-none-eabi-10-2020-q4-major/bin/",
                 "GNU_VERSION=10.2.1",
@@ -36,7 +36,7 @@
             "command": "make",
             "args": [
                 //"-j4", // For faster builds, set the number to your CPU core count
-                "S1_SDK_ROOT=${workspaceFolder}/s1-sdk",
+                "S1_SDK_ROOT=${workspaceFolder}/firmware/s1-sdk",
                 "SDK_ROOT=${HOME}/nRF5_SDK_17.0.2_d674dde",
                 "GNU_INSTALL_ROOT=${HOME}/gcc-arm-none-eabi-10-2020-q4-major/bin/",
                 "GNU_VERSION=10.2.1",
@@ -49,8 +49,8 @@
             "command": "make",
             "args": [
                 "build-verilog",
-                "S1_SDK_ROOT=${workspaceFolder}/s1-sdk",
-                "VERILOG_ROOT=${workspaceFolder}/verilog/blinky",
+                "S1_SDK_ROOT=${workspaceFolder}/firmware/s1-sdk",
+                "VERILOG_ROOT=${workspaceFolder}/firmware/verilog/blinky",
                 "TOP=blinky"
             ],
             "problemMatcher": []
@@ -60,8 +60,8 @@
             "command": "make",
             "args": [
                 "sim-verilog",
-                "S1_SDK_ROOT=${HOME}/Documents/SW/s1-sdk",
-                "VERILOG_ROOT=${workspaceFolder}/verilog/blinky",
+                "S1_SDK_ROOT=${workspaceFolder}/firmware/s1-sdk",
+                "VERILOG_ROOT=${workspaceFolder}/firmware/verilog/blinky",
                 "TOP=blinky"
             ],
             "problemMatcher": []
