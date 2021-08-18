@@ -3,3 +3,11 @@ kicad-proj/*.bck
 kicad-proj/*.sch-bak
 kicad-proj/*.kicad_pcb-bak
 kicad-proj/fp-info-cache
+*.fst
+*.old
+*.asc
+*.dblite
+*.ini
+*.vcd
+*.out
+firmware/.build

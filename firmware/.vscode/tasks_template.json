@@ -1,0 +1,93 @@
+// VS Code Build Scripts
+//
+// These are shortcuts for command line calls for building
+// or doing other useful "tasks" such as clean or erasinig.
+// By pressing Ctrl-Shift-B, or Cmd-Shift-B on MacOS, you 
+// will run the default make task shown below. By pressing
+// Ctrl-Shift-P, or Cmd-Shift-P, and typing "Run Task", you 
+// can select other tasks.
+//
+//
+// By default, these tasks build the fpga-blinky example.
+// Modify these for your own project.
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Make and flash project",
+            "command": "make",
+            "args": [
+                //"-j4", // For faster builds, set the number to your CPU core count
+                "flash",
+                "S1_SDK_ROOT=${HOME}"
+            ],
+            "problemMatcher": "$gcc",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Make project",
+            "command": "make",
+            "args": [
+                //"-j4", // For faster builds, set the number to your CPU core count
+                "S1_SDK_ROOT=${HOME}"
+            ],
+            "problemMatcher": "$gcc",
+        },
+        {
+            "label": "Build verilog project [APIO]",
+            "command": "make",
+            "args": [
+                "build-verilog-apio",
+                "S1_SDK_ROOT=${HOME}",
+                "VERILOG_ROOT=${HOME}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Build verilog project [MIGEN]",
+            "command": "make",
+            "args": [
+                "build-verilog-migen",
+                "S1_SDK_ROOT=${HOME}",
+                "VERILOG_ROOT=${HOME}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean",
+            "command": "make",
+            "args": [
+                "clean"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Erase",
+            "command": "make",
+            "args": [
+                "erase"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Reset",
+            "command": "make",
+            "args": [
+                "reset"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Fix verilog indentation",
+            "command": "iStyle",
+            "args": [
+                "${file}",
+                "--suffix=.old"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}
