@@ -113,7 +113,7 @@ OPT += -g3 # Debugging information
 
 # C flags common to all targets
 CFLAGS += $(OPT)
-#CFLAGS += -DDEBUG
+CFLAGS += -DDEBUG
 CFLAGS += -DAPP_TIMER_V2
 CFLAGS += -DAPP_TIMER_V2_RTC1_ENABLED
 CFLAGS += -DFLOAT_ABI_SOFT
