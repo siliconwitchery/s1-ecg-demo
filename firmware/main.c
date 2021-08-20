@@ -101,7 +101,7 @@ static void fpga_boot_task(void *p_context)
         s1_flash_wakeup();
         s1_flash_erase_all();
         fpga_boot_state = ERASING;
-        LOG("Erasing flash. Takes up to 80 seconds.");
+        // LOG("Erasing flash. Takes up to 80 seconds.");
         break;
 
     // Wait for erase to complete
@@ -110,7 +110,7 @@ static void fpga_boot_task(void *p_context)
         {
             pages_remaining = (uint32_t)ceil((float)fpga_binfile_bin_len / 256.0);
             fpga_boot_state = FLASHING;
-            LOG("Flashing %d pages.", pages_remaining);
+            // LOG("Flashing %d pages.", pages_remaining);
         }
         break;
 
@@ -127,7 +127,7 @@ static void fpga_boot_task(void *p_context)
         {
             fpga_boot_state = BOOTING;
             s1_fpga_boot();
-            LOG("Flashing done.");
+            // LOG("Flashing done.");
             break;
         }
         break;
@@ -139,21 +139,21 @@ static void fpga_boot_task(void *p_context)
             // app_timer_stop(fpga_boot_task_id);
             fpga_boot_state = XFER;
             generic_spi_init();
-            LOG("FPGA started.");
+            // LOG("FPGA started.");
         }
         break;
 
     // SPI XFER to fpga
     case XFER:
+        tx_buffer = adc_val;
         generic_spi_tx(tx_buffer);
         fpga_boot_state = WAIT;
-        LOG("Sent %#x", tx_buffer);
-        tx_buffer++;
+        // LOG("Sent %#x", tx_buffer);
         break;
 
     // Wait for n timer ticks
     case WAIT:
-        if (fpga_spi_delay_counter == 199)
+        if (fpga_spi_delay_counter == 19)
         {
             fpga_boot_state = XFER;
             fpga_spi_delay_counter = 0;
@@ -210,6 +210,8 @@ void saadc_callback(nrfx_saadc_evt_t const *p_event)
         // TODO: Add ADC calibration here, clipping negatives to 0
         if (adc_val < 0)
             adc_val = 0;
+        LOG("%u", adc_val);
+        adc_val = 255 - (adc_val >> 4);
         m_adc_evt_counter++;
     }
 }
@@ -306,14 +308,14 @@ int main(void)
                                     APP_TIMER_TICKS(5),
                                     NULL));
 
-    // // Create timer for ADC
-    // APP_ERROR_CHECK(app_timer_create(&adc_task_id,
-    //                                  APP_TIMER_MODE_REPEATED,
-    //                                  saadc_task));
-    // // Run ADC at 125Hz -> 1000 / 125 = 8ms
-    // APP_ERROR_CHECK(app_timer_start(adc_task_id,
-    //                                 APP_TIMER_TICKS(8),
-    //                                 NULL));
+    // Create timer for ADC
+    APP_ERROR_CHECK(app_timer_create(&adc_task_id,
+                                     APP_TIMER_MODE_REPEATED,
+                                     saadc_task));
+    // Run ADC at 125Hz -> 1000 / 125 = 8ms
+    APP_ERROR_CHECK(app_timer_start(adc_task_id,
+                                    APP_TIMER_TICKS(1),
+                                    NULL));
 
     // // Create timer for filter
     // APP_ERROR_CHECK(app_timer_create(&filter_task_id,
