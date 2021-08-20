@@ -6,7 +6,7 @@ wire clock;
 wire clk;
 wire slow_clk;
 
-SB_HFOSC #(.CLKHF_DIV("0b11"))  osc(.CLKHFEN(1'b1),     // enable
+SB_HFOSC #(.CLKHF_DIV("0b10"))  osc(.CLKHFEN(1'b1),     // enable
                                     .CLKHFPU(1'b1), // power up
                                     .CLKHF(clock)         // output to sysclk
                                    ) /* synthesis ROUTE_THROUGH_FABRIC=0 */;

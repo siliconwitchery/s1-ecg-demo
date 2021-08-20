@@ -1,52 +1,42 @@
 module block_spi_slave(input wire clk, input wire reset, input wire SPI_SCK,
-                       input wire SPI_SS, input wire SPI_MOSI, output SPI_MISO,
-                       output [7:0] o_data
+                       input wire SPI_CS, input wire SPI_MOSI, output SPI_MISO,
+                       output [7:0] data_out, output data_ready
                       );
 
-reg r_w;
-reg [3:0] bit_counter;
-reg [7:0] recv_buf;
-reg [7:0] send_buf;
-reg trans_queued;
-reg LED;
-reg SPI_MISO;
-reg [7:0] old_recv;
+// sync to FPGA clock using a 3-bit shift register
+reg [2:0] SCKreg;
+reg [2:0] CSreg;
+reg [1:0] MOSIreg;
 
-initial begin
-    bit_counter = 0;
-    r_w  = 0;
-    // trans_queued = 0;
-    LED = 0;
-    recv_buf = 0;
-    send_buf = 'h3;
-    SPI_MISO = 0;
-end
+wire SCK_rising = (SCKreg[2:1]==2'b01);  // rising edges
+wire SCK_falling = (SCKreg[2:1]==2'b10);  // falling edges
 
-// SPI_MODE_1 -> Data sampled on falling edge and shifted out on the rising edge by master
-always @(posedge SPI_SCK) begin
-    // SO
-    if (SPI_SS == 0 && !r_w) begin
-        SPI_MISO <= send_buf[bit_counter];
-    end
-end
+wire CS_active = CSreg[1];  // CS is active high
 
-always @(negedge SPI_SCK) begin
-    // SI
-    if (SPI_SS == 0 && !r_w) begin
-        recv_buf[bit_counter] <= SPI_MOSI;
-        if (bit_counter == 'd7) begin
-            bit_counter <= 0;
-            // send_buf <= recv_buf;
-        end
-        else bit_counter <= bit_counter + 1;
-    end
-end
+wire MOSI_data = MOSIreg[1];
+
+reg [2:0] bit_counter;
+
+reg data_ready;  // high when a byte has been received
+reg [7:0] byte_data_received = 0;
+reg [7:0] data_out = 0;
 
 always @(posedge clk) begin
-    if (trans_queued==1) begin
-        if (recv_buf[0] == 1 || recv_buf[7] == 1) LED <= 1;
-        else LED <= 0;
-        trans_queued <= 0;
+    SCKreg <= {SCKreg[1:0], SPI_SCK};
+    CSreg <= {CSreg[1:0], SPI_CS};
+    MOSIreg <= {MOSIreg[0], SPI_MOSI};
+
+    if(!CS_active) begin
+        bit_counter <= 3'b000;
+        data_out <= byte_data_received;
+        data_ready <= 1;
+    end
+    else begin
+        data_ready <= 0;
+        if(SCK_rising)  begin
+            bit_counter <= bit_counter + 3'b001;
+            byte_data_received <= {byte_data_received[6:0], MOSI_data};
+        end
     end
 end
 

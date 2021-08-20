@@ -44,18 +44,22 @@
 #define SPI_CS_PIN NRF_GPIO_PIN_MAP(0, 12)
 #define SPI_CLK_PIN NRF_GPIO_PIN_MAP(0, 15)
 
+static uint8_t fpga_spi_delay_counter = 0;
+static uint8_t tx_buffer = 0x00;
+
 static nrf_saadc_value_t m_buffer;
-static uint32_t SAMPLES_IN_BUFFER = 1;
+static uint8_t SAMPLES_IN_BUFFER = 1;
 static uint32_t m_adc_evt_counter;
 static int32_t adc_val;
 
 static float buffer[65];
-static int32_t buff_idx = 0;
+static int8_t buff_idx = 0;
 static float filtered_val;
 
 APP_TIMER_DEF(fpga_boot_task_id);
 APP_TIMER_DEF(adc_task_id);
 APP_TIMER_DEF(filter_task_id);
+APP_TIMER_DEF(spi_task_id);
 
 typedef enum
 {
@@ -63,7 +67,8 @@ typedef enum
     ERASING,
     FLASHING,
     BOOTING,
-    DONE
+    XFER,
+    WAIT
 } fpga_boot_state_t;
 
 static fpga_boot_state_t fpga_boot_state = STARTED;
@@ -105,7 +110,7 @@ static void fpga_boot_task(void *p_context)
         {
             pages_remaining = (uint32_t)ceil((float)fpga_binfile_bin_len / 256.0);
             fpga_boot_state = FLASHING;
-            // LOG("Flashing %d pages.", pages_remaining);
+            LOG("Flashing %d pages.", pages_remaining);
         }
         break;
 
@@ -122,7 +127,7 @@ static void fpga_boot_task(void *p_context)
         {
             fpga_boot_state = BOOTING;
             s1_fpga_boot();
-            // LOG("Flashing done.");
+            LOG("Flashing done.");
             break;
         }
         break;
@@ -131,10 +136,30 @@ static void fpga_boot_task(void *p_context)
     case BOOTING:
         if (s1_fpga_is_booted())
         {
-            app_timer_stop(fpga_boot_task_id);
-            fpga_boot_state = DONE;
-            // LOG("FPGA started.");
+            // app_timer_stop(fpga_boot_task_id);
+            fpga_boot_state = XFER;
+            generic_spi_init();
+            LOG("FPGA started.");
         }
+        break;
+
+    // SPI XFER to fpga
+    case XFER:
+        generic_spi_tx(tx_buffer);
+        fpga_boot_state = WAIT;
+        LOG("Sent %#x", tx_buffer);
+        tx_buffer++;
+        break;
+
+    // Wait for n timer ticks
+    case WAIT:
+        if (fpga_spi_delay_counter == 199)
+        {
+            fpga_boot_state = XFER;
+            fpga_spi_delay_counter = 0;
+        }
+        else
+            fpga_spi_delay_counter += 1;
         break;
     }
 }
@@ -281,23 +306,23 @@ int main(void)
                                     APP_TIMER_TICKS(5),
                                     NULL));
 
-    // Create timer for ADC
-    APP_ERROR_CHECK(app_timer_create(&adc_task_id,
-                                     APP_TIMER_MODE_REPEATED,
-                                     saadc_task));
-    // Run ADC at 125Hz -> 1000 / 125 = 8ms
-    APP_ERROR_CHECK(app_timer_start(adc_task_id,
-                                    APP_TIMER_TICKS(8),
-                                    NULL));
+    // // Create timer for ADC
+    // APP_ERROR_CHECK(app_timer_create(&adc_task_id,
+    //                                  APP_TIMER_MODE_REPEATED,
+    //                                  saadc_task));
+    // // Run ADC at 125Hz -> 1000 / 125 = 8ms
+    // APP_ERROR_CHECK(app_timer_start(adc_task_id,
+    //                                 APP_TIMER_TICKS(8),
+    //                                 NULL));
 
-    // Create timer for filter
-    APP_ERROR_CHECK(app_timer_create(&filter_task_id,
-                                     APP_TIMER_MODE_REPEATED,
-                                     filter_task));
+    // // Create timer for filter
+    // APP_ERROR_CHECK(app_timer_create(&filter_task_id,
+    //                                  APP_TIMER_MODE_REPEATED,
+    //                                  filter_task));
 
-    APP_ERROR_CHECK(app_timer_start(filter_task_id,
-                                    APP_TIMER_TICKS(8),
-                                    NULL));
+    // APP_ERROR_CHECK(app_timer_start(filter_task_id,
+    //                                 APP_TIMER_TICKS(8),
+    //                                 NULL));
 
     // The CPU is free to do nothing in the meanwhile
     for (;;)
