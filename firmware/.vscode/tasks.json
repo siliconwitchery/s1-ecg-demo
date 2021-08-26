@@ -54,8 +54,8 @@
                 "GNU_INSTALL_ROOT=${HOME}/Documents/SW/gcc-arm-none-eabi-10-2020-q4-major/bin/",
                 "GNU_VERSION=10.2.1",
                 "GNU_PREFIX=arm-none-eabi",
-                "VERILOG_ROOT=${workspaceFolder}/verilog/pwm-test",
-                "TOP=pwm-test"
+                "VERILOG_ROOT=${workspaceFolder}/verilog/led-pwm",
+                "TOP=led-pwm"
             ],
             "problemMatcher": []
         },
@@ -78,7 +78,9 @@
             "label": "Clean",
             "command": "make",
             "args": [
-                "clean"
+                "clean",
+                "S1_SDK_ROOT=${HOME}/Documents/SW/s1-sdk",
+                "SDK_ROOT=${HOME}/Documents/SW/nRF5_SDK_17.0.2_d674dde"
             ],
             "problemMatcher": []
         },

@@ -37,6 +37,7 @@
 #include "nrfx_spim.h"
 #include "nrfx_twim.h"
 #include "s1.h"
+#include "nrfx_gpiote.h"
 #include "fir_filter.h"
 
 #define SPI_SI_PIN NRF_GPIO_PIN_MAP(0, 8)
@@ -45,7 +46,7 @@
 #define SPI_CLK_PIN NRF_GPIO_PIN_MAP(0, 15)
 
 static uint8_t fpga_spi_delay_counter = 0;
-static uint8_t tx_buffer = 0x00;
+static uint8_t tx_buffer[2] = {0, 0};
 
 static nrf_saadc_value_t m_buffer;
 static uint8_t SAMPLES_IN_BUFFER = 1;
@@ -53,13 +54,13 @@ static uint32_t m_adc_evt_counter;
 static int32_t adc_val;
 
 static float buffer[65];
-static int8_t buff_idx = 0;
-static float filtered_val;
+static uint8_t buff_idx = 0;
+static uint32_t filtered_val;
+static bool ecg_active = 0;
 
 APP_TIMER_DEF(fpga_boot_task_id);
 APP_TIMER_DEF(adc_task_id);
 APP_TIMER_DEF(filter_task_id);
-APP_TIMER_DEF(spi_task_id);
 
 typedef enum
 {
@@ -67,13 +68,16 @@ typedef enum
     ERASING,
     FLASHING,
     BOOTING,
-    XFER,
-    WAIT
+    UPDATE_PINS,
+    WAIT,
+    IDLE
 } fpga_boot_state_t;
 
 static fpga_boot_state_t fpga_boot_state = STARTED;
 static uint32_t pages_remaining;
 static uint32_t page_address = 0x000000;
+
+s1_fpga_pins_t s1_fpga_pins;
 
 /**
  * @brief Clock event callback. Not used but required to have.
@@ -90,6 +94,8 @@ void clock_event_handler(nrfx_clock_evt_type_t event) {}
 static void fpga_boot_task(void *p_context)
 {
     UNUSED_PARAMETER(p_context);
+    uint8_t led_idx;
+    const uint8_t STEP = 20;
     switch (fpga_boot_state)
     {
     // Configure power and erase the flash
@@ -137,36 +143,52 @@ static void fpga_boot_task(void *p_context)
         if (s1_fpga_is_booted())
         {
             // app_timer_stop(fpga_boot_task_id);
-            fpga_boot_state = XFER;
-            generic_spi_init();
+            fpga_boot_state = UPDATE_PINS;
+            // TODO: add an IDLE state when fpga <-> nrf comms not needed
+            s1_generic_spi_init();
             // LOG("FPGA started.");
         }
         break;
 
-    // SPI XFER to fpga
-    case XFER:
-        tx_buffer = adc_val;
-        generic_spi_tx(tx_buffer);
+    // SPI pin data with fpga
+    case UPDATE_PINS:
+        for (int i = 0; i < 8; i++)
+        {
+            if (s1_fpga_pins.duty_cycle[i] > STEP)
+            {
+                s1_fpga_pins.duty_cycle[i] = s1_fpga_pins.duty_cycle[i] - STEP;
+            }
+            else
+                s1_fpga_pins.duty_cycle[i] = 0;
+        }
+        led_idx = ceil(filtered_val / 585); // 7 sections
+        // LOG("%d %d", led_idx, adc_val);
+        s1_fpga_pins.duty_cycle[led_idx] = 255;
+        s1_fpga_io_update(&s1_fpga_pins);
         fpga_boot_state = WAIT;
-        // LOG("Sent %#x", tx_buffer);
         break;
 
     // Wait for n timer ticks
     case WAIT:
-        if (fpga_spi_delay_counter == 19)
+        if (fpga_spi_delay_counter == 1)
         {
-            fpga_boot_state = XFER;
+            fpga_boot_state = UPDATE_PINS;
             fpga_spi_delay_counter = 0;
         }
         else
             fpga_spi_delay_counter += 1;
+        break;
+
+    // Set everything to 0
+    case IDLE:
+
         break;
     }
 }
 
 void graph_to_log(uint32_t value)
 {
-    const uint32_t steps = 30;
+    const uint32_t steps = 5;
     uint32_t idx = value / floor(4095.0 / steps);
     // LOG_RAW("%d__|", idx);
     LOG_RAW(" |");
@@ -210,9 +232,10 @@ void saadc_callback(nrfx_saadc_evt_t const *p_event)
         // TODO: Add ADC calibration here, clipping negatives to 0
         if (adc_val < 0)
             adc_val = 0;
-        LOG("%u", adc_val);
-        adc_val = 255 - (adc_val >> 4);
+        // LOG("%u", adc_val);
+        // adc_val = 255 - (adc_val >> 4);
         m_adc_evt_counter++;
+        uint32_t lod = nrf_gpio_pin_read(5);
     }
 }
 
@@ -257,20 +280,97 @@ void saadc_task(void *p_context)
 
 void filter_task(void *p_context)
 {
+    // Moving average filter
+    uint8_t WINDOW_SIZE = 8;
     buffer[buff_idx] = adc_val;
-    if (buff_idx == 64)
+    if (buff_idx == WINDOW_SIZE)
         buff_idx = 0;
     else
         buff_idx = buff_idx + 1;
     filtered_val = 0;
-    for (int i = 0; i < 65; i++)
+    for (int i = 0; i < WINDOW_SIZE + 1; i++)
     {
-        if (i + buff_idx < 65)
-            filtered_val += buffer[i + buff_idx] * fir_coefs[i];
-        else
-            filtered_val += buffer[i + buff_idx - 65] * fir_coefs[i];
+        filtered_val += buffer[i];
     }
-    graph_to_log((uint32_t)filtered_val);
+    filtered_val = filtered_val / WINDOW_SIZE;
+    // LOG("%d", filtered_val);
+    // graph_to_log(filtered_val);
+
+    // FIR notch filter
+    // buffer[buff_idx] = adc_val;
+    // if (buff_idx == 64)
+    //     buff_idx = 0;
+    // else
+    //     buff_idx = buff_idx + 1;
+    // filtered_val = 0;
+    // for (int i = 0; i < 65; i++)
+    // {
+    //     if (i + buff_idx < 65)
+    //         filtered_val += buffer[i + buff_idx] * fir_coefs[i];
+    //     else
+    //         filtered_val += buffer[i + buff_idx - 65] * fir_coefs[i];
+    // }
+    // graph_to_log((uint32_t)filtered_val);
+}
+
+static void ecg_sleep()
+{
+    // Stop tasks
+    APP_ERROR_CHECK(app_timer_stop(adc_task_id));
+    APP_ERROR_CHECK(app_timer_stop(filter_task_id));
+
+    // Clear fpga pins
+    for (int i = 0; i < 8; i++)
+    {
+        s1_fpga_pins.duty_cycle[i] = 0;
+    }
+    s1_fpga_io_update(&s1_fpga_pins);
+    ecg_active = 0;
+    LOG("sleep");
+}
+
+static void ecg_wake()
+{
+    // Restart tasks
+    APP_ERROR_CHECK(app_timer_start(adc_task_id,
+                                    APP_TIMER_TICKS(1),
+                                    NULL));
+    APP_ERROR_CHECK(app_timer_start(filter_task_id,
+                                    APP_TIMER_TICKS(1),
+                                    NULL));
+
+    fpga_boot_state = WAIT;
+    ecg_active = 1;
+    LOG("wake");
+}
+
+static void in_pin_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
+{
+    uint32_t lod = nrf_gpio_pin_read(5);
+    if (fpga_boot_state > 3)
+    {
+        if (lod && ecg_active)
+            ecg_sleep();
+        else if (!lod && !ecg_active)
+            ecg_wake();
+        LOG("pinstate %d", lod);
+    }
+}
+
+static void gpio_init(void)
+{
+    ret_code_t err_code;
+
+    err_code = nrfx_gpiote_init();
+    APP_ERROR_CHECK(err_code);
+
+    nrfx_gpiote_in_config_t in_config = NRFX_GPIOTE_CONFIG_IN_SENSE_TOGGLE(true);
+    in_config.pull = NRF_GPIO_PIN_NOPULL;
+
+    err_code = nrfx_gpiote_in_init(5, &in_config, in_pin_handler);
+    APP_ERROR_CHECK(err_code);
+
+    nrfx_gpiote_in_event_enable(5, true);
 }
 
 /**
@@ -299,13 +399,21 @@ int main(void)
     // Initialise ADC
     saadc_init();
 
+    // Make all fpga pins PWM and clear outputs
+    for (int i = 0; i < 8; i++)
+    {
+        s1_fpga_pins.pin_mode[i] = PWM;
+        s1_fpga_pins.duty_cycle[i] = 0;
+    }
+    gpio_init();
+
     // Create and start a timer for the FPGA flash/boot task
     APP_ERROR_CHECK(app_timer_create(&fpga_boot_task_id,
                                      APP_TIMER_MODE_REPEATED,
                                      fpga_boot_task));
 
     APP_ERROR_CHECK(app_timer_start(fpga_boot_task_id,
-                                    APP_TIMER_TICKS(5),
+                                    APP_TIMER_TICKS(1),
                                     NULL));
 
     // Create timer for ADC
@@ -317,14 +425,14 @@ int main(void)
                                     APP_TIMER_TICKS(1),
                                     NULL));
 
-    // // Create timer for filter
-    // APP_ERROR_CHECK(app_timer_create(&filter_task_id,
-    //                                  APP_TIMER_MODE_REPEATED,
-    //                                  filter_task));
+    // Create timer for filter
+    APP_ERROR_CHECK(app_timer_create(&filter_task_id,
+                                     APP_TIMER_MODE_REPEATED,
+                                     filter_task));
 
-    // APP_ERROR_CHECK(app_timer_start(filter_task_id,
-    //                                 APP_TIMER_TICKS(8),
-    //                                 NULL));
+    APP_ERROR_CHECK(app_timer_start(filter_task_id,
+                                    APP_TIMER_TICKS(1),
+                                    NULL));
 
     // The CPU is free to do nothing in the meanwhile
     for (;;)

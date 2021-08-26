@@ -5525,19 +5525,19 @@
         },
         "D6": {
           "direction": "output",
-          "bits": [ 5 ]
+          "bits": [ 6 ]
         },
         "D7": {
           "direction": "output",
-          "bits": [ 6 ]
+          "bits": [ 7 ]
         },
         "D8": {
           "direction": "output",
-          "bits": [ 7 ]
+          "bits": [ 8 ]
         }
       },
       "cells": {
-        "$abc$240$auto$blifparse.cc:492:parse_blif$241": {
+        "$abc$296$auto$blifparse.cc:492:parse_blif$297": {
           "hide_name": 1,
           "type": "SB_LUT4",
           "parameters": {
@@ -5555,14 +5555,14 @@
             "O": "output"
           },
           "connections": {
-            "I0": [ 8 ],
-            "I1": [ 9 ],
-            "I2": [ 10 ],
+            "I0": [ 9 ],
+            "I1": [ 10 ],
+            "I2": [ 11 ],
             "I3": [ "0" ],
-            "O": [ 11 ]
+            "O": [ 12 ]
           }
         },
-        "$abc$240$auto$blifparse.cc:492:parse_blif$242": {
+        "$abc$296$auto$blifparse.cc:492:parse_blif$298": {
           "hide_name": 1,
           "type": "SB_LUT4",
           "parameters": {
@@ -5580,271 +5580,187 @@
             "O": "output"
           },
           "connections": {
-            "I0": [ 10 ],
+            "I0": [ 11 ],
             "I1": [ "0" ],
             "I2": [ "0" ],
             "I3": [ "0" ],
-            "O": [ 12 ]
+            "O": [ 13 ]
           }
         },
         "$auto$simplemap.cc:420:simplemap_dff$100": {
           "hide_name": 1,
-          "type": "SB_DFF",
+          "type": "SB_DFFE",
           "parameters": {
           },
           "attributes": {
             "module_not_derived": 1,
-            "src": "spi-test.v:34|block_spi_slave.v:24|/usr/bin/../share/yosys/ice40/cells_map.v:2"
+            "src": "spi-test.v:35|block_spi_slave.v:23|/usr/bin/../share/yosys/ice40/cells_map.v:8"
           },
           "port_directions": {
             "C": "input",
             "D": "input",
+            "E": "input",
             "Q": "output"
           },
           "connections": {
-            "C": [ 13 ],
-            "D": [ 2 ],
-            "Q": [ 14 ]
+            "C": [ 14 ],
+            "D": [ 15 ],
+            "E": [ 12 ],
+            "Q": [ 16 ]
           }
         },
         "$auto$simplemap.cc:420:simplemap_dff$101": {
           "hide_name": 1,
-          "type": "SB_DFF",
+          "type": "SB_DFFE",
           "parameters": {
           },
           "attributes": {
             "module_not_derived": 1,
-            "src": "spi-test.v:34|block_spi_slave.v:24|/usr/bin/../share/yosys/ice40/cells_map.v:2"
+            "src": "spi-test.v:35|block_spi_slave.v:23|/usr/bin/../share/yosys/ice40/cells_map.v:8"
           },
           "port_directions": {
             "C": "input",
             "D": "input",
+            "E": "input",
             "Q": "output"
           },
           "connections": {
-            "C": [ 13 ],
-            "D": [ 14 ],
-            "Q": [ 15 ]
+            "C": [ 14 ],
+            "D": [ 16 ],
+            "E": [ 12 ],
+            "Q": [ 17 ]
           }
         },
         "$auto$simplemap.cc:420:simplemap_dff$102": {
           "hide_name": 1,
-          "type": "SB_DFF",
+          "type": "SB_DFFE",
           "parameters": {
           },
           "attributes": {
             "module_not_derived": 1,
-            "src": "spi-test.v:34|block_spi_slave.v:24|/usr/bin/../share/yosys/ice40/cells_map.v:2"
+            "src": "spi-test.v:35|block_spi_slave.v:23|/usr/bin/../share/yosys/ice40/cells_map.v:8"
           },
           "port_directions": {
             "C": "input",
             "D": "input",
+            "E": "input",
             "Q": "output"
           },
           "connections": {
-            "C": [ 13 ],
-            "D": [ 4 ],
-            "Q": [ 16 ]
-          }
-        },
-        "$auto$simplemap.cc:420:simplemap_dff$103": {
-          "hide_name": 1,
-          "type": "SB_DFF",
-          "parameters": {
-          },
-          "attributes": {
-            "module_not_derived": 1,
-            "src": "spi-test.v:34|block_spi_slave.v:24|/usr/bin/../share/yosys/ice40/cells_map.v:2"
-          },
-          "port_directions": {
-            "C": "input",
-            "D": "input",
-            "Q": "output"
-          },
-          "connections": {
-            "C": [ 13 ],
-            "D": [ 16 ],
-            "Q": [ 10 ]
-          }
-        },
-        "$auto$simplemap.cc:420:simplemap_dff$104": {
-          "hide_name": 1,
-          "type": "SB_DFF",
-          "parameters": {
-          },
-          "attributes": {
-            "module_not_derived": 1,
-            "src": "spi-test.v:34|block_spi_slave.v:24|/usr/bin/../share/yosys/ice40/cells_map.v:2"
-          },
-          "port_directions": {
-            "C": "input",
-            "D": "input",
-            "Q": "output"
-          },
-          "connections": {
-            "C": [ 13 ],
-            "D": [ 3 ],
-            "Q": [ 17 ]
-          }
-        },
-        "$auto$simplemap.cc:420:simplemap_dff$105": {
-          "hide_name": 1,
-          "type": "SB_DFF",
-          "parameters": {
-          },
-          "attributes": {
-            "module_not_derived": 1,
-            "src": "spi-test.v:34|block_spi_slave.v:24|/usr/bin/../share/yosys/ice40/cells_map.v:2"
-          },
-          "port_directions": {
-            "C": "input",
-            "D": "input",
-            "Q": "output"
-          },
-          "connections": {
-            "C": [ 13 ],
+            "C": [ 14 ],
             "D": [ 17 ],
-            "Q": [ 9 ]
-          }
-        },
-        "$auto$simplemap.cc:420:simplemap_dff$106": {
-          "hide_name": 1,
-          "type": "SB_DFF",
-          "parameters": {
-          },
-          "attributes": {
-            "module_not_derived": 1,
-            "src": "spi-test.v:34|block_spi_slave.v:24|/usr/bin/../share/yosys/ice40/cells_map.v:2"
-          },
-          "port_directions": {
-            "C": "input",
-            "D": "input",
-            "Q": "output"
-          },
-          "connections": {
-            "C": [ 13 ],
-            "D": [ 9 ],
-            "Q": [ 8 ]
-          }
-        },
-        "$auto$simplemap.cc:420:simplemap_dff$107": {
-          "hide_name": 1,
-          "type": "SB_DFFE",
-          "parameters": {
-          },
-          "attributes": {
-            "module_not_derived": 1,
-            "src": "spi-test.v:34|block_spi_slave.v:24|/usr/bin/../share/yosys/ice40/cells_map.v:8"
-          },
-          "port_directions": {
-            "C": "input",
-            "D": "input",
-            "E": "input",
-            "Q": "output"
-          },
-          "connections": {
-            "C": [ 13 ],
-            "D": [ 18 ],
             "E": [ 12 ],
-            "Q": [ 5 ]
-          }
-        },
-        "$auto$simplemap.cc:420:simplemap_dff$108": {
-          "hide_name": 1,
-          "type": "SB_DFFE",
-          "parameters": {
-          },
-          "attributes": {
-            "module_not_derived": 1,
-            "src": "spi-test.v:34|block_spi_slave.v:24|/usr/bin/../share/yosys/ice40/cells_map.v:8"
-          },
-          "port_directions": {
-            "C": "input",
-            "D": "input",
-            "E": "input",
-            "Q": "output"
-          },
-          "connections": {
-            "C": [ 13 ],
-            "D": [ 19 ],
-            "E": [ 12 ],
-            "Q": [ 7 ]
-          }
-        },
-        "$auto$simplemap.cc:420:simplemap_dff$109": {
-          "hide_name": 1,
-          "type": "SB_DFFE",
-          "parameters": {
-          },
-          "attributes": {
-            "module_not_derived": 1,
-            "src": "spi-test.v:34|block_spi_slave.v:24|/usr/bin/../share/yosys/ice40/cells_map.v:8"
-          },
-          "port_directions": {
-            "C": "input",
-            "D": "input",
-            "E": "input",
-            "Q": "output"
-          },
-          "connections": {
-            "C": [ 13 ],
-            "D": [ 20 ],
-            "E": [ 12 ],
-            "Q": [ 6 ]
-          }
-        },
-        "$auto$simplemap.cc:420:simplemap_dff$92": {
-          "hide_name": 1,
-          "type": "SB_DFFE",
-          "parameters": {
-          },
-          "attributes": {
-            "module_not_derived": 1,
-            "src": "spi-test.v:34|block_spi_slave.v:24|/usr/bin/../share/yosys/ice40/cells_map.v:8"
-          },
-          "port_directions": {
-            "C": "input",
-            "D": "input",
-            "E": "input",
-            "Q": "output"
-          },
-          "connections": {
-            "C": [ 13 ],
-            "D": [ 15 ],
-            "E": [ 11 ],
             "Q": [ 18 ]
           }
         },
-        "$auto$simplemap.cc:420:simplemap_dff$93": {
+        "$auto$simplemap.cc:420:simplemap_dff$115": {
           "hide_name": 1,
-          "type": "SB_DFFE",
+          "type": "SB_DFF",
           "parameters": {
           },
           "attributes": {
             "module_not_derived": 1,
-            "src": "spi-test.v:34|block_spi_slave.v:24|/usr/bin/../share/yosys/ice40/cells_map.v:8"
+            "src": "spi-test.v:35|block_spi_slave.v:23|/usr/bin/../share/yosys/ice40/cells_map.v:2"
           },
           "port_directions": {
             "C": "input",
             "D": "input",
-            "E": "input",
             "Q": "output"
           },
           "connections": {
-            "C": [ 13 ],
-            "D": [ 18 ],
-            "E": [ 11 ],
+            "C": [ 14 ],
+            "D": [ 4 ],
             "Q": [ 19 ]
           }
         },
-        "$auto$simplemap.cc:420:simplemap_dff$94": {
+        "$auto$simplemap.cc:420:simplemap_dff$116": {
+          "hide_name": 1,
+          "type": "SB_DFF",
+          "parameters": {
+          },
+          "attributes": {
+            "module_not_derived": 1,
+            "src": "spi-test.v:35|block_spi_slave.v:23|/usr/bin/../share/yosys/ice40/cells_map.v:2"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 14 ],
+            "D": [ 19 ],
+            "Q": [ 11 ]
+          }
+        },
+        "$auto$simplemap.cc:420:simplemap_dff$117": {
+          "hide_name": 1,
+          "type": "SB_DFF",
+          "parameters": {
+          },
+          "attributes": {
+            "module_not_derived": 1,
+            "src": "spi-test.v:35|block_spi_slave.v:23|/usr/bin/../share/yosys/ice40/cells_map.v:2"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 14 ],
+            "D": [ 3 ],
+            "Q": [ 20 ]
+          }
+        },
+        "$auto$simplemap.cc:420:simplemap_dff$118": {
+          "hide_name": 1,
+          "type": "SB_DFF",
+          "parameters": {
+          },
+          "attributes": {
+            "module_not_derived": 1,
+            "src": "spi-test.v:35|block_spi_slave.v:23|/usr/bin/../share/yosys/ice40/cells_map.v:2"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 14 ],
+            "D": [ 20 ],
+            "Q": [ 10 ]
+          }
+        },
+        "$auto$simplemap.cc:420:simplemap_dff$119": {
+          "hide_name": 1,
+          "type": "SB_DFF",
+          "parameters": {
+          },
+          "attributes": {
+            "module_not_derived": 1,
+            "src": "spi-test.v:35|block_spi_slave.v:23|/usr/bin/../share/yosys/ice40/cells_map.v:2"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 14 ],
+            "D": [ 10 ],
+            "Q": [ 9 ]
+          }
+        },
+        "$auto$simplemap.cc:420:simplemap_dff$120": {
           "hide_name": 1,
           "type": "SB_DFFE",
           "parameters": {
           },
           "attributes": {
             "module_not_derived": 1,
-            "src": "spi-test.v:34|block_spi_slave.v:24|/usr/bin/../share/yosys/ice40/cells_map.v:8"
+            "src": "spi-test.v:35|block_spi_slave.v:23|/usr/bin/../share/yosys/ice40/cells_map.v:8"
           },
           "port_directions": {
             "C": "input",
@@ -5853,10 +5769,138 @@
             "Q": "output"
           },
           "connections": {
-            "C": [ 13 ],
-            "D": [ 19 ],
-            "E": [ 11 ],
-            "Q": [ 20 ]
+            "C": [ 14 ],
+            "D": [ 15 ],
+            "E": [ 13 ],
+            "Q": [ 5 ]
+          }
+        },
+        "$auto$simplemap.cc:420:simplemap_dff$121": {
+          "hide_name": 1,
+          "type": "SB_DFFE",
+          "parameters": {
+          },
+          "attributes": {
+            "module_not_derived": 1,
+            "src": "spi-test.v:35|block_spi_slave.v:23|/usr/bin/../share/yosys/ice40/cells_map.v:8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 14 ],
+            "D": [ 16 ],
+            "E": [ 13 ],
+            "Q": [ 8 ]
+          }
+        },
+        "$auto$simplemap.cc:420:simplemap_dff$122": {
+          "hide_name": 1,
+          "type": "SB_DFFE",
+          "parameters": {
+          },
+          "attributes": {
+            "module_not_derived": 1,
+            "src": "spi-test.v:35|block_spi_slave.v:23|/usr/bin/../share/yosys/ice40/cells_map.v:8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 14 ],
+            "D": [ 17 ],
+            "E": [ 13 ],
+            "Q": [ 7 ]
+          }
+        },
+        "$auto$simplemap.cc:420:simplemap_dff$123": {
+          "hide_name": 1,
+          "type": "SB_DFFE",
+          "parameters": {
+          },
+          "attributes": {
+            "module_not_derived": 1,
+            "src": "spi-test.v:35|block_spi_slave.v:23|/usr/bin/../share/yosys/ice40/cells_map.v:8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 14 ],
+            "D": [ 18 ],
+            "E": [ 13 ],
+            "Q": [ 6 ]
+          }
+        },
+        "$auto$simplemap.cc:420:simplemap_dff$97": {
+          "hide_name": 1,
+          "type": "SB_DFF",
+          "parameters": {
+          },
+          "attributes": {
+            "module_not_derived": 1,
+            "src": "spi-test.v:35|block_spi_slave.v:23|/usr/bin/../share/yosys/ice40/cells_map.v:2"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 14 ],
+            "D": [ 2 ],
+            "Q": [ 21 ]
+          }
+        },
+        "$auto$simplemap.cc:420:simplemap_dff$98": {
+          "hide_name": 1,
+          "type": "SB_DFF",
+          "parameters": {
+          },
+          "attributes": {
+            "module_not_derived": 1,
+            "src": "spi-test.v:35|block_spi_slave.v:23|/usr/bin/../share/yosys/ice40/cells_map.v:2"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 14 ],
+            "D": [ 21 ],
+            "Q": [ 22 ]
+          }
+        },
+        "$auto$simplemap.cc:420:simplemap_dff$99": {
+          "hide_name": 1,
+          "type": "SB_DFFE",
+          "parameters": {
+          },
+          "attributes": {
+            "module_not_derived": 1,
+            "src": "spi-test.v:35|block_spi_slave.v:23|/usr/bin/../share/yosys/ice40/cells_map.v:8"
+          },
+          "port_directions": {
+            "C": "input",
+            "D": "input",
+            "E": "input",
+            "Q": "output"
+          },
+          "connections": {
+            "C": [ 14 ],
+            "D": [ 22 ],
+            "E": [ 12 ],
+            "Q": [ 15 ]
           }
         },
         "clock.osc": {
@@ -5867,7 +5911,7 @@
           },
           "attributes": {
             "module_not_derived": 1,
-            "src": "spi-test.v:33|block_clock.v:9"
+            "src": "spi-test.v:34|block_clock.v:9"
           },
           "port_directions": {
             "CLKHF": "output",
@@ -5875,22 +5919,22 @@
             "CLKHFPU": "input"
           },
           "connections": {
-            "CLKHF": [ 13 ],
+            "CLKHF": [ 14 ],
             "CLKHFEN": [ "1" ],
             "CLKHFPU": [ "1" ]
           }
         }
       },
       "netnames": {
-        "$abc$240$auto$dff2dffe.cc:158:make_patterns_logic$139": {
+        "$abc$296$auto$dff2dffe.cc:158:make_patterns_logic$225": {
           "hide_name": 1,
-          "bits": [ 12 ],
+          "bits": [ 13 ],
           "attributes": {
           }
         },
-        "$abc$240$auto$dff2dffe.cc:175:make_patterns_logic$172": {
+        "$abc$296$auto$dff2dffe.cc:175:make_patterns_logic$183": {
           "hide_name": 1,
-          "bits": [ 11 ],
+          "bits": [ 12 ],
           "attributes": {
           }
         },
@@ -5903,21 +5947,21 @@
         },
         "D6": {
           "hide_name": 0,
-          "bits": [ 5 ],
+          "bits": [ 6 ],
           "attributes": {
             "src": "spi-test.v:10"
           }
         },
         "D7": {
           "hide_name": 0,
-          "bits": [ 6 ],
+          "bits": [ 7 ],
           "attributes": {
             "src": "spi-test.v:11"
           }
         },
         "D8": {
           "hide_name": 0,
-          "bits": [ 7 ],
+          "bits": [ 8 ],
           "attributes": {
             "src": "spi-test.v:12"
           }
@@ -5950,115 +5994,129 @@
             "src": "spi-test.v:8"
           }
         },
+        "address": {
+          "hide_name": 0,
+          "bits": [ "0", "0", "0", "0", "0", "0", "0", "0" ],
+          "attributes": {
+            "src": "spi-test.v:24"
+          }
+        },
         "clk": {
           "hide_name": 0,
-          "bits": [ 13 ],
+          "bits": [ 14 ],
           "attributes": {
             "src": "spi-test.v:14"
           }
         },
         "clock.clk": {
           "hide_name": 0,
-          "bits": [ 13 ],
+          "bits": [ 14 ],
           "attributes": {
-            "src": "spi-test.v:33|block_clock.v:2"
+            "src": "spi-test.v:34|block_clock.v:2"
           }
         },
         "clock.clock": {
           "hide_name": 0,
-          "bits": [ 13 ],
+          "bits": [ 14 ],
           "attributes": {
-            "src": "spi-test.v:33|block_clock.v:5"
+            "src": "spi-test.v:34|block_clock.v:5"
           }
         },
         "data": {
           "hide_name": 0,
-          "bits": [ 5, 7, 6, "0", "0", "0", "0", "0" ],
+          "bits": [ 5, 8, 7, 6, "0", "0", "0", "0" ],
           "attributes": {
             "src": "spi-test.v:23"
           }
         },
         "spi_slave.CS_active": {
           "hide_name": 0,
-          "bits": [ 10 ],
+          "bits": [ 11 ],
           "attributes": {
-            "src": "spi-test.v:34|block_spi_slave.v:14"
+            "src": "spi-test.v:35|block_spi_slave.v:13"
           }
         },
         "spi_slave.CSreg": {
           "hide_name": 0,
-          "bits": [ 16, 10 ],
+          "bits": [ 19, 11 ],
           "attributes": {
           }
         },
         "spi_slave.MOSI_data": {
           "hide_name": 0,
-          "bits": [ 15 ],
+          "bits": [ 22 ],
           "attributes": {
-            "src": "spi-test.v:34|block_spi_slave.v:16"
+            "src": "spi-test.v:35|block_spi_slave.v:14"
           }
         },
         "spi_slave.MOSIreg": {
           "hide_name": 0,
-          "bits": [ 14, 15 ],
+          "bits": [ 21, 22 ],
           "attributes": {
-            "src": "spi-test.v:34|block_spi_slave.v:9"
+            "src": "spi-test.v:35|block_spi_slave.v:9"
           }
         },
         "spi_slave.SCKreg": {
           "hide_name": 0,
-          "bits": [ 17, 9, 8 ],
+          "bits": [ 20, 10, 9 ],
           "attributes": {
-            "src": "spi-test.v:34|block_spi_slave.v:7"
+            "src": "spi-test.v:35|block_spi_slave.v:7"
           }
         },
         "spi_slave.SPI_CS": {
           "hide_name": 0,
           "bits": [ 4 ],
           "attributes": {
-            "src": "spi-test.v:34|block_spi_slave.v:2"
+            "src": "spi-test.v:35|block_spi_slave.v:2"
           }
         },
         "spi_slave.SPI_MISO": {
           "hide_name": 0,
           "bits": [ "x" ],
           "attributes": {
-            "src": "spi-test.v:34|block_spi_slave.v:2"
+            "src": "spi-test.v:35|block_spi_slave.v:2"
           }
         },
         "spi_slave.SPI_MOSI": {
           "hide_name": 0,
           "bits": [ 2 ],
           "attributes": {
-            "src": "spi-test.v:34|block_spi_slave.v:2"
+            "src": "spi-test.v:35|block_spi_slave.v:2"
           }
         },
         "spi_slave.SPI_SCK": {
           "hide_name": 0,
           "bits": [ 3 ],
           "attributes": {
-            "src": "spi-test.v:34|block_spi_slave.v:1"
+            "src": "spi-test.v:35|block_spi_slave.v:1"
           }
         },
-        "spi_slave.byte_data_received": {
+        "spi_slave.address_out": {
           "hide_name": 0,
-          "bits": [ 18, 19, 20, "0", "0", "0", "0", "0" ],
+          "bits": [ "0", "0", "0", "0", "0", "0", "0", "0" ],
           "attributes": {
-            "src": "spi-test.v:34|block_spi_slave.v:21"
+            "src": "spi-test.v:35|block_spi_slave.v:3"
           }
         },
         "spi_slave.clk": {
           "hide_name": 0,
-          "bits": [ 13 ],
+          "bits": [ 14 ],
           "attributes": {
-            "src": "spi-test.v:34|block_spi_slave.v:1"
+            "src": "spi-test.v:35|block_spi_slave.v:1"
           }
         },
         "spi_slave.data_out": {
           "hide_name": 0,
-          "bits": [ 5, 7, 6, "0", "0", "0", "0", "0" ],
+          "bits": [ 5, 8, 7, 6, "0", "0", "0", "0" ],
           "attributes": {
-            "src": "spi-test.v:34|block_spi_slave.v:3"
+            "src": "spi-test.v:35|block_spi_slave.v:3"
+          }
+        },
+        "spi_slave.data_received": {
+          "hide_name": 0,
+          "bits": [ 15, 16, 17, 18, "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0" ],
+          "attributes": {
+            "src": "spi-test.v:35|block_spi_slave.v:19"
           }
         }
       }
