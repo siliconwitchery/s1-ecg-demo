@@ -1,6 +1,6 @@
 /**
  * @file  s1-ecg-demo/main.c
- * @brief Simple FPGA blinky Application running on S1
+ * @brief Tiny ECG Application running on S1
  *        
  *        Includes basic configuration of the S1 module, and
  *        operations required to boot the FPGA. The FPGA 
@@ -26,28 +26,10 @@
  * OF THIS SOFTWARE.
  */
 
-#include <math.h>
-#include "app_scheduler.h"
-#include "app_timer.h"
-#include "fpga_binfile.h"
-#include "nrf_gpio.h"
-#include "nrf52811.h"
-#include "nrfx_clock.h"
-#include "nrfx_saadc.h"
-#include "nrfx_spim.h"
-#include "nrfx_twim.h"
-#include "s1.h"
-#include "nrfx_gpiote.h"
-#include "fir_filter.h"
+#include "main.h"
 
-#define SPI_SI_PIN NRF_GPIO_PIN_MAP(0, 8)
-#define SPI_SO_PIN NRF_GPIO_PIN_MAP(0, 11)
-#define SPI_CS_PIN NRF_GPIO_PIN_MAP(0, 12)
-#define SPI_CLK_PIN NRF_GPIO_PIN_MAP(0, 15)
-
+// Globals
 static uint8_t fpga_spi_delay_counter = 0;
-static uint8_t tx_buffer[2] = {0, 0};
-
 static nrf_saadc_value_t m_buffer;
 static uint8_t SAMPLES_IN_BUFFER = 1;
 static uint32_t m_adc_evt_counter;
@@ -62,17 +44,6 @@ APP_TIMER_DEF(fpga_boot_task_id);
 APP_TIMER_DEF(adc_task_id);
 APP_TIMER_DEF(filter_task_id);
 
-typedef enum
-{
-    STARTED,
-    ERASING,
-    FLASHING,
-    BOOTING,
-    UPDATE_PINS,
-    WAIT,
-    IDLE
-} fpga_boot_state_t;
-
 static fpga_boot_state_t fpga_boot_state = STARTED;
 static uint32_t pages_remaining;
 static uint32_t page_address = 0x000000;
@@ -84,13 +55,6 @@ s1_fpga_pins_t s1_fpga_pins;
  */
 void clock_event_handler(nrfx_clock_evt_type_t event) {}
 
-/**
- * @brief Timer based state machine for flashing the FPGA
- *        image and booting the FPGA. As some of the flash
- *        operations take a lot of time, using a timer based
- *        state machine avoids the main thread hanging while
- *        waiting for flash operations to complete.
- */
 static void fpga_boot_task(void *p_context)
 {
     UNUSED_PARAMETER(p_context);
@@ -186,10 +150,9 @@ static void fpga_boot_task(void *p_context)
     }
 }
 
-void graph_to_log(uint32_t value)
+void graph_to_log(uint32_t value, uint32_t min, uint32_t max, uint8_t steps)
 {
-    const uint32_t steps = 5;
-    uint32_t idx = value / floor(4095.0 / steps);
+    uint32_t idx = value / floor((max - min) / steps);
     // LOG_RAW("%d__|", idx);
     LOG_RAW(" |");
     if (idx > 0)
@@ -207,8 +170,7 @@ void graph_to_log(uint32_t value)
             LOG_RAW(" ");
         }
     }
-    float scaled_value = value / 4095.0 * 1.8;
-    LOG_RAW("| %.2f \r\n", scaled_value);
+    LOG_RAW("| %lu \r\n", value);
 }
 
 void saadc_callback(nrfx_saadc_evt_t const *p_event)
@@ -235,7 +197,6 @@ void saadc_callback(nrfx_saadc_evt_t const *p_event)
         // LOG("%u", adc_val);
         // adc_val = 255 - (adc_val >> 4);
         m_adc_evt_counter++;
-        uint32_t lod = nrf_gpio_pin_read(5);
     }
 }
 
@@ -271,7 +232,7 @@ void saadc_init(void)
 void saadc_task(void *p_context)
 {
     // LOG("# %u %d", m_adc_evt_counter, adc_val);
-    // graph_to_log((uint32_t)adc_val);
+    // graph_to_log((uint32_t)adc_val, 0, 4095, 10);
 
     ret_code_t err_code;
     err_code = nrfx_saadc_sample();
@@ -294,7 +255,7 @@ void filter_task(void *p_context)
     }
     filtered_val = filtered_val / WINDOW_SIZE;
     // LOG("%d", filtered_val);
-    // graph_to_log(filtered_val);
+    // graph_to_log((uint32_t)filtered_val, 0, 4095, 10);
 
     // FIR notch filter
     // buffer[buff_idx] = adc_val;
@@ -310,7 +271,7 @@ void filter_task(void *p_context)
     //     else
     //         filtered_val += buffer[i + buff_idx - 65] * fir_coefs[i];
     // }
-    // graph_to_log((uint32_t)filtered_val);
+    // graph_to_log((uint32_t)filtered_val, 0, 4095, 10);
 }
 
 static void ecg_sleep()
@@ -346,7 +307,7 @@ static void ecg_wake()
 
 static void in_pin_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
 {
-    uint32_t lod = nrf_gpio_pin_read(5);
+    uint32_t lod = nrf_gpio_pin_read(GPIO2_PIN);
     if (fpga_boot_state > 3)
     {
         if (lod && ecg_active)
@@ -367,10 +328,10 @@ static void gpio_init(void)
     nrfx_gpiote_in_config_t in_config = NRFX_GPIOTE_CONFIG_IN_SENSE_TOGGLE(true);
     in_config.pull = NRF_GPIO_PIN_NOPULL;
 
-    err_code = nrfx_gpiote_in_init(5, &in_config, in_pin_handler);
+    err_code = nrfx_gpiote_in_init(GPIO2_PIN, &in_config, in_pin_handler);
     APP_ERROR_CHECK(err_code);
 
-    nrfx_gpiote_in_event_enable(5, true);
+    nrfx_gpiote_in_event_enable(GPIO2_PIN, true);
 }
 
 /**
@@ -420,7 +381,6 @@ int main(void)
     APP_ERROR_CHECK(app_timer_create(&adc_task_id,
                                      APP_TIMER_MODE_REPEATED,
                                      saadc_task));
-    // Run ADC at 125Hz -> 1000 / 125 = 8ms
     APP_ERROR_CHECK(app_timer_start(adc_task_id,
                                     APP_TIMER_TICKS(1),
                                     NULL));
@@ -429,7 +389,6 @@ int main(void)
     APP_ERROR_CHECK(app_timer_create(&filter_task_id,
                                      APP_TIMER_MODE_REPEATED,
                                      filter_task));
-
     APP_ERROR_CHECK(app_timer_start(filter_task_id,
                                     APP_TIMER_TICKS(1),
                                     NULL));
