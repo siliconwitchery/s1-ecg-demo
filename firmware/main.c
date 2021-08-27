@@ -55,7 +55,7 @@ s1_fpga_pins_t s1_fpga_pins;
  */
 void clock_event_handler(nrfx_clock_evt_type_t event) {}
 
-static void fpga_boot_task(void *p_context)
+void fpga_boot_task(void *p_context)
 {
     UNUSED_PARAMETER(p_context);
     uint8_t led_idx;
@@ -71,7 +71,7 @@ static void fpga_boot_task(void *p_context)
         s1_flash_wakeup();
         s1_flash_erase_all();
         fpga_boot_state = ERASING;
-        // LOG("Erasing flash. Takes up to 80 seconds.");
+        LOG("Erasing flash. Takes up to 80 seconds.");
         break;
 
     // Wait for erase to complete
@@ -80,7 +80,7 @@ static void fpga_boot_task(void *p_context)
         {
             pages_remaining = (uint32_t)ceil((float)fpga_binfile_bin_len / 256.0);
             fpga_boot_state = FLASHING;
-            // LOG("Flashing %d pages.", pages_remaining);
+            LOG("Flashing %d pages.", pages_remaining);
         }
         break;
 
@@ -97,7 +97,7 @@ static void fpga_boot_task(void *p_context)
         {
             fpga_boot_state = BOOTING;
             s1_fpga_boot();
-            // LOG("Flashing done.");
+            LOG("Flashing done.");
             break;
         }
         break;
@@ -110,7 +110,8 @@ static void fpga_boot_task(void *p_context)
             fpga_boot_state = UPDATE_PINS;
             // TODO: add an IDLE state when fpga <-> nrf comms not needed
             s1_generic_spi_init();
-            // LOG("FPGA started.");
+            LOG("FPGA started.");
+            ecg_wake();
         }
         break;
 
@@ -145,7 +146,16 @@ static void fpga_boot_task(void *p_context)
 
     // Set everything to 0
     case IDLE:
-
+        for (int i = 0; i < 8; i++)
+        {
+            if (s1_fpga_pins.duty_cycle[i] > STEP)
+            {
+                s1_fpga_pins.duty_cycle[i] = s1_fpga_pins.duty_cycle[i] - STEP;
+            }
+            else
+                s1_fpga_pins.duty_cycle[i] = 0;
+        }
+        s1_fpga_io_update(&s1_fpga_pins);
         break;
     }
 }
@@ -274,7 +284,7 @@ void filter_task(void *p_context)
     // graph_to_log((uint32_t)filtered_val, 0, 4095, 10);
 }
 
-static void ecg_sleep()
+void ecg_sleep()
 {
     // Stop tasks
     APP_ERROR_CHECK(app_timer_stop(adc_task_id));
@@ -287,10 +297,10 @@ static void ecg_sleep()
     }
     s1_fpga_io_update(&s1_fpga_pins);
     ecg_active = 0;
-    LOG("sleep");
+    LOG("ecg sleep");
 }
 
-static void ecg_wake()
+void ecg_wake()
 {
     // Restart tasks
     APP_ERROR_CHECK(app_timer_start(adc_task_id,
@@ -302,10 +312,10 @@ static void ecg_wake()
 
     fpga_boot_state = WAIT;
     ecg_active = 1;
-    LOG("wake");
+    LOG("ecg wake");
 }
 
-static void in_pin_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
+void in_pin_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
 {
     uint32_t lod = nrf_gpio_pin_read(GPIO2_PIN);
     if (fpga_boot_state > 3)
@@ -314,11 +324,10 @@ static void in_pin_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
             ecg_sleep();
         else if (!lod && !ecg_active)
             ecg_wake();
-        LOG("pinstate %d", lod);
     }
 }
 
-static void gpio_init(void)
+void gpio_init(void)
 {
     ret_code_t err_code;
 
@@ -381,17 +390,11 @@ int main(void)
     APP_ERROR_CHECK(app_timer_create(&adc_task_id,
                                      APP_TIMER_MODE_REPEATED,
                                      saadc_task));
-    APP_ERROR_CHECK(app_timer_start(adc_task_id,
-                                    APP_TIMER_TICKS(1),
-                                    NULL));
 
     // Create timer for filter
     APP_ERROR_CHECK(app_timer_create(&filter_task_id,
                                      APP_TIMER_MODE_REPEATED,
                                      filter_task));
-    APP_ERROR_CHECK(app_timer_start(filter_task_id,
-                                    APP_TIMER_TICKS(1),
-                                    NULL));
 
     // The CPU is free to do nothing in the meanwhile
     for (;;)

@@ -58,7 +58,7 @@ typedef enum
  *        state machine avoids the main thread hanging while
  *        waiting for flash operations to complete.
  */
-static void fpga_boot_task(void *p_context);
+void fpga_boot_task(void *p_context);
 
 /**
  * @brief Debug function to plot a variable over log
@@ -75,10 +75,10 @@ void saadc_task(void *p_context);
 
 void filter_task(void *p_context);
 
-static void ecg_sleep();
+void ecg_sleep();
 
-static void ecg_wake();
+void ecg_wake();
 
-static void in_pin_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action);
+void in_pin_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action);
 
-static void gpio_init(void);
+void gpio_init(void);
