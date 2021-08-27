@@ -62,23 +62,46 @@ void fpga_boot_task(void *p_context);
 
 /**
  * @brief Debug function to plot a variable over log
- * 
- * @param value: 14
  */
 void graph_to_log(uint32_t value, uint32_t min, uint32_t max, uint8_t steps);
 
+/**
+ * @brief ADC callback function
+ */
 void saadc_callback(nrfx_saadc_evt_t const *p_event);
 
+/**
+ * @brief Function to initialize ADC
+ */
 void saadc_init(void);
 
+/**
+ * @brief ADC task
+ */
 void saadc_task(void *p_context);
 
+/**
+ * @brief Filter task callback
+ */
 void filter_task(void *p_context);
 
+/**
+ * @brief Helper function to stop ecg associated tasks
+ */
 void ecg_sleep();
 
+/**
+ * @brief Helper function to start ecg associated tasks
+ */
 void ecg_wake();
 
+/**
+ * @brief Interrupt handler, puts device into sleep / wake
+ */
 void in_pin_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action);
 
+/**
+ * @brief Initializes GPIOTE module, interrupt handler called when LOD pin
+ * when LOD pin toggles
+ */
 void gpio_init(void);
