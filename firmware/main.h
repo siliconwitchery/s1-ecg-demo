@@ -48,7 +48,11 @@ typedef enum
     BOOTING,
     UPDATE_PINS,
     WAIT,
-    IDLE
+    IDLE,
+    SLEEP,
+    SLEEPING,
+    WAKE,
+    LOAD_FROM_FLASH
 } fpga_boot_state_t;
 
 /**
@@ -104,4 +108,4 @@ void in_pin_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action);
  * @brief Initializes GPIOTE module, interrupt handler called when LOD pin
  * when LOD pin toggles
  */
-void gpio_init(void);
+void lod_gpio_init(void);

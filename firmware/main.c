@@ -38,7 +38,7 @@ static int32_t adc_val;
 static float buffer[65];
 static uint8_t buff_idx = 0;
 static uint32_t filtered_val;
-static bool ecg_active = 0;
+static bool ecg_active = 1;
 
 APP_TIMER_DEF(fpga_boot_task_id);
 APP_TIMER_DEF(adc_task_id);
@@ -59,7 +59,7 @@ void fpga_boot_task(void *p_context)
 {
     UNUSED_PARAMETER(p_context);
     uint8_t led_idx;
-    const uint8_t STEP = 20;
+    const uint8_t STEP = 50;
     switch (fpga_boot_state)
     {
     // Configure power and erase the flash
@@ -106,12 +106,22 @@ void fpga_boot_task(void *p_context)
     case BOOTING:
         if (s1_fpga_is_booted())
         {
-            // app_timer_stop(fpga_boot_task_id);
-            fpga_boot_state = UPDATE_PINS;
-            // TODO: add an IDLE state when fpga <-> nrf comms not needed
-            s1_generic_spi_init();
-            LOG("FPGA started.");
-            ecg_wake();
+            // Small delay here for fpga to setup
+            if (fpga_spi_delay_counter > 50)
+            {
+                // app_timer_stop(fpga_boot_task_id);
+                fpga_boot_state = UPDATE_PINS;
+                // TODO: add an IDLE state when fpga <-> nrf comms not needed
+                s1_generic_spi_init();
+                lod_gpio_init();
+                LOG("FPGA started.");
+                // ecg_wake();
+                fpga_spi_delay_counter = 0;
+            }
+            else
+            {
+                fpga_spi_delay_counter += 1;
+            }
         }
         break;
 
@@ -126,11 +136,23 @@ void fpga_boot_task(void *p_context)
             else
                 s1_fpga_pins.duty_cycle[i] = 0;
         }
-        led_idx = ceil(filtered_val / 585); // 7 sections
-        // LOG("%d %d", led_idx, adc_val);
-        s1_fpga_pins.duty_cycle[led_idx] = 255;
+        if (ecg_active)
+        {
+            led_idx = ceil(filtered_val / 585); // 7 sections
+            // led_idx = ceil((filtered_val - 2450) / 60); // 7 sections
+            // FIXME - hack to subtract min value
+            if (led_idx > 7)
+                led_idx = 7;
+            led_idx = 8 - led_idx; // flip the wave
+            LOG("%d %d", led_idx, filtered_val);
+            s1_fpga_pins.duty_cycle[led_idx] = 255;
+            s1_fpga_pins.duty_cycle[0] = 255;
+            fpga_boot_state = WAIT;
+        }
+        else
+            fpga_boot_state = SLEEP;
+
         s1_fpga_io_update(&s1_fpga_pins);
-        fpga_boot_state = WAIT;
         break;
 
     // Wait for n timer ticks
@@ -156,6 +178,44 @@ void fpga_boot_task(void *p_context)
                 s1_fpga_pins.duty_cycle[i] = 0;
         }
         s1_fpga_io_update(&s1_fpga_pins);
+        break;
+
+    // Shutdown fpga on leads off
+    case SLEEP:
+        s1_pmic_set_vaux(0);
+        s1_pmic_set_vio(0);
+        s1_pimc_fpga_vcore(false);
+        LOG("FPGA core voltage shutdown");
+        fpga_boot_state = SLEEPING;
+        // APP_ERROR_CHECK(app_timer_stop(fpga_boot_task_id));
+        break;
+
+    case SLEEPING:
+        if (ecg_active)
+        {
+            fpga_boot_state = WAKE;
+            LOG("FPGA wakeup seq initiated");
+        }
+        break;
+
+    // Turn on fpga voltages
+    case WAKE:
+        s1_pimc_fpga_vcore(true);
+        s1_pmic_set_vio(3.3);
+        s1_pmic_set_vaux(3.3);
+        s1_fpga_boot();
+        LOG("FPGA vcore on");
+        fpga_boot_state = LOAD_FROM_FLASH;
+        break;
+
+    // Load image from flash
+    case LOAD_FROM_FLASH:
+        if (s1_fpga_is_booted())
+        {
+            s1_generic_spi_init();
+            LOG("FPGA boot complete");
+            fpga_boot_state = UPDATE_PINS;
+        }
         break;
     }
 }
@@ -309,8 +369,6 @@ void ecg_wake()
     APP_ERROR_CHECK(app_timer_start(filter_task_id,
                                     APP_TIMER_TICKS(1),
                                     NULL));
-
-    fpga_boot_state = WAIT;
     ecg_active = 1;
     LOG("ecg wake");
 }
@@ -327,7 +385,7 @@ void in_pin_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
     }
 }
 
-void gpio_init(void)
+void lod_gpio_init(void)
 {
     ret_code_t err_code;
 
@@ -375,7 +433,6 @@ int main(void)
         s1_fpga_pins.pin_mode[i] = PWM;
         s1_fpga_pins.duty_cycle[i] = 0;
     }
-    gpio_init();
 
     // Create and start a timer for the FPGA flash/boot task
     APP_ERROR_CHECK(app_timer_create(&fpga_boot_task_id,
@@ -383,7 +440,7 @@ int main(void)
                                      fpga_boot_task));
 
     APP_ERROR_CHECK(app_timer_start(fpga_boot_task_id,
-                                    APP_TIMER_TICKS(1),
+                                    APP_TIMER_TICKS(10),
                                     NULL));
 
     // Create timer for ADC

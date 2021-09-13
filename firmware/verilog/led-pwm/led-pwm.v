@@ -13,7 +13,8 @@ module top(input SI,
            output D1,
            output D4,
            output D3,
-           output D2);
+           output D2,
+           output D5);
 
 wire clk;
 wire SI;
@@ -27,6 +28,9 @@ wire D4;
 wire D6;
 wire D7;
 wire D8;
+reg D8_oe = 0;
+wire D8_o;
+reg D8_i = 0;
 reg [7:0] duty_cycle1 = 0;
 reg [7:0] duty_cycle2 = 0;
 reg [7:0] duty_cycle3 = 0;
@@ -42,13 +46,18 @@ block_clock clock(.clk(clk));
 block_spi_slave spi_slave(.clk(clk), .SPI_SCK(SCK), .SPI_CS(SS), .SPI_MOSI(SI),
                           .SPI_MISO(SO), .data_out(data), .address_out(address),
                           .data_ready(data_ready));
-block_pwm pwm1(.clk(clk), .duty_cycle(duty_cycle1), .pwm_out(D6));
-block_pwm pwm2(.clk(clk), .duty_cycle(duty_cycle2), .pwm_out(D8));
-block_pwm pwm3(.clk(clk), .duty_cycle(duty_cycle3), .pwm_out(D7));
+block_pwm pwm1(.clk(clk), .duty_cycle(duty_cycle1), .pwm_out(D2));
+block_pwm pwm2(.clk(clk), .duty_cycle(duty_cycle2), .pwm_out(D3));
+block_pwm pwm3(.clk(clk), .duty_cycle(duty_cycle3), .pwm_out(D4));
 block_pwm pwm4(.clk(clk), .duty_cycle(duty_cycle4), .pwm_out(D1));
-block_pwm pwm5(.clk(clk), .duty_cycle(duty_cycle5), .pwm_out(D4));
-block_pwm pwm6(.clk(clk), .duty_cycle(duty_cycle6), .pwm_out(D3));
-block_pwm pwm7(.clk(clk), .duty_cycle(duty_cycle7), .pwm_out(D2));
+block_pwm pwm5(.clk(clk), .duty_cycle(duty_cycle5), .pwm_out(D7));
+block_pwm pwm6(.clk(clk), .duty_cycle(duty_cycle6), .pwm_out(D6));
+block_pwm pwm7(.clk(clk), .duty_cycle(duty_cycle7), .pwm_out(D5));
+SB_IO #(
+          .PIN_TYPE(6'b1010_01), .PULLUP(1'b0)
+      ) triState (
+          .PACKAGE_PIN(D8), .OUTPUT_ENABLE(D8_oe), .D_OUT_0(D8_i), .D_IN_0(D8_o)
+      );
 
 always @(posedge clk) begin
     if (data_ready) begin
@@ -60,8 +69,8 @@ always @(posedge clk) begin
             5 : duty_cycle5 <= data;
             6 : duty_cycle6 <= data;
             7 : duty_cycle7 <= data;
+            0 : D8_oe <= ~data[0];
         endcase
     end
 end
-
 endmodule

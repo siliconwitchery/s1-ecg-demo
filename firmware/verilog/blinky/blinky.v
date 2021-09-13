@@ -20,14 +20,14 @@ block_clock clk_src(
                 .clk(clk)
             );
 
-assign D8 = 0;
-assign D7 = 0;
-assign D1 = 0;
-assign D4 = 0;
+assign D8 = led;
+assign D7 = led;
+assign D1 = led;
+assign D4 = led;
 assign D3 = led;
-assign D2 = 0;
-assign D5 = 0;
-assign D6 = 0;
+assign D2 = led;
+assign D5 = led;
+assign D6 = led;
 
 always @(posedge clk) begin
     if(count == 0) led <= ~led;
