@@ -69,9 +69,26 @@ void fpga_boot_task(void *p_context)
         s1_pmic_set_vaux(3.3);
         s1_fpga_hold_reset();
         s1_flash_wakeup();
-        s1_flash_erase_all();
-        fpga_boot_state = ERASING;
-        LOG("Erasing flash. Takes up to 80 seconds.");
+        fpga_boot_state = CHECK_BIN_CRC;
+        break;
+
+    case CHECK_BIN_CRC:
+        if (!s1_flash_is_busy())
+        {
+            if (s1_fpga_crc_check())
+            {
+                LOG("CRC OK");
+                s1_fpga_boot();
+                fpga_boot_state = BOOTING;
+            }
+            else
+            {
+                LOG("CRC mismatch");
+                s1_flash_erase_all();
+                fpga_boot_state = ERASING;
+                LOG("Erasing flash. Takes up to 80 seconds.");
+            }
+        }
         break;
 
     // Wait for erase to complete
@@ -218,6 +235,30 @@ void fpga_boot_task(void *p_context)
         }
         break;
     }
+}
+
+bool s1_fpga_crc_check()
+{
+    uint8_t tx_buffer[4];
+    uint8_t rx_buffer[7] = {0};
+    uint32_t flash_crc;
+    uint32_t binfile_crc;
+
+    // Read flash [0x03], 3 bytes from 0x019694 -> CRC location
+    tx_buffer[0] = 0x03;
+    tx_buffer[1] = 0x01;
+    tx_buffer[2] = 0x96;
+    tx_buffer[3] = 0x94;
+
+    // Careful when using this after boot, will deinit other SPI functionality
+    flash_tx_rx((uint8_t *)&tx_buffer, 4, (uint8_t *)&rx_buffer, 7);
+
+    flash_crc = (rx_buffer[4] << 16) + (rx_buffer[5] << 8) + rx_buffer[6];
+    binfile_crc = (fpga_binfile_bin[104084] << 16) + (fpga_binfile_bin[104085] << 8) + fpga_binfile_bin[104086];
+    if (flash_crc == binfile_crc)
+        return true;
+    else
+        return false;
 }
 
 void graph_to_log(uint32_t value, uint32_t min, uint32_t max, uint8_t steps)

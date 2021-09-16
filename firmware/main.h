@@ -52,8 +52,14 @@ typedef enum
     SLEEP,
     SLEEPING,
     WAKE,
-    LOAD_FROM_FLASH
+    LOAD_FROM_FLASH,
+    CHECK_BIN_CRC
 } fpga_boot_state_t;
+
+/**
+ * @brief Check CRC match between flash and fpga binfile
+ */
+bool s1_fpga_crc_check();
 
 /**
  * @brief Timer based state machine for flashing the FPGA
