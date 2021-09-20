@@ -36,6 +36,7 @@
 #include "nrfx_saadc.h"
 #include "nrfx_spim.h"
 #include "nrfx_twim.h"
+#include "nrf_pwr_mgmt.h"
 #include "s1.h"
 #include "nrfx_gpiote.h"
 #include "fir_filter.h"
@@ -106,12 +107,9 @@ void ecg_sleep();
 void ecg_wake();
 
 /**
- * @brief Interrupt handler, puts device into sleep / wake
- */
-void in_pin_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action);
-
-/**
  * @brief Initializes GPIOTE module, interrupt handler called when LOD pin
  * when LOD pin toggles
  */
 void lod_gpio_init(void);
+
+void check_leads_off();

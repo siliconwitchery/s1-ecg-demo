@@ -29,7 +29,7 @@
 #include "main.h"
 
 // Globals
-static uint8_t fpga_spi_delay_counter = 0;
+static uint16_t fpga_spi_delay_counter = 0;
 static nrf_saadc_value_t m_buffer;
 static uint8_t SAMPLES_IN_BUFFER = 1;
 static uint32_t m_adc_evt_counter;
@@ -60,6 +60,7 @@ void fpga_boot_task(void *p_context)
     UNUSED_PARAMETER(p_context);
     uint8_t led_idx;
     const uint8_t STEP = 50;
+    uint8_t flash_sleep_cmd = 0xB9;
     switch (fpga_boot_state)
     {
     // Configure power and erase the flash
@@ -124,7 +125,7 @@ void fpga_boot_task(void *p_context)
         if (s1_fpga_is_booted())
         {
             // Small delay here for fpga to setup
-            if (fpga_spi_delay_counter > 50)
+            if (fpga_spi_delay_counter > 5)
             {
                 // app_timer_stop(fpga_boot_task_id);
                 fpga_boot_state = UPDATE_PINS;
@@ -132,7 +133,7 @@ void fpga_boot_task(void *p_context)
                 s1_generic_spi_init();
                 lod_gpio_init();
                 LOG("FPGA started.");
-                // ecg_wake();
+                ecg_wake();
                 fpga_spi_delay_counter = 0;
             }
             else
@@ -164,10 +165,13 @@ void fpga_boot_task(void *p_context)
             LOG("%d %d", led_idx, filtered_val);
             s1_fpga_pins.duty_cycle[led_idx] = 255;
             s1_fpga_pins.duty_cycle[0] = 255;
+
             fpga_boot_state = WAIT;
         }
         else
+        {
             fpga_boot_state = SLEEP;
+        }
 
         s1_fpga_io_update(&s1_fpga_pins);
         break;
@@ -199,12 +203,27 @@ void fpga_boot_task(void *p_context)
 
     // Shutdown fpga on leads off
     case SLEEP:
-        s1_pmic_set_vaux(0);
-        s1_pmic_set_vio(0);
-        s1_pimc_fpga_vcore(false);
-        LOG("FPGA core voltage shutdown");
-        fpga_boot_state = SLEEPING;
-        // APP_ERROR_CHECK(app_timer_stop(fpga_boot_task_id));
+        if (fpga_spi_delay_counter == 300)
+        {
+            // Put flash in deep sleep
+            flash_tx_rx((uint8_t *)&flash_sleep_cmd, 1, NULL, 0);
+            LOG("Flash deep sleep");
+            NRFX_DELAY_US(2);
+            // APP_ERROR_CHECK(app_timer_stop(fpga_boot_task_id));
+        }
+        else if (fpga_spi_delay_counter == 600)
+        {
+            s1_pmic_set_vaux(0);
+            s1_pmic_set_vio(0.0);
+            s1_pimc_fpga_vcore(false);
+            LOG("FPGA core voltage shutdown");
+        }
+        else if (fpga_spi_delay_counter == 900)
+        {
+            nrf_pwr_mgmt_shutdown(NRF_PWR_MGMT_SHUTDOWN_GOTO_SYSOFF);
+        }
+        LOG("%d", fpga_spi_delay_counter);
+        fpga_spi_delay_counter++;
         break;
 
     case SLEEPING:
@@ -383,6 +402,7 @@ void filter_task(void *p_context)
     //         filtered_val += buffer[i + buff_idx - 65] * fir_coefs[i];
     // }
     // graph_to_log((uint32_t)filtered_val, 0, 4095, 10);
+    check_leads_off();
 }
 
 void ecg_sleep()
@@ -390,14 +410,17 @@ void ecg_sleep()
     // Stop tasks
     APP_ERROR_CHECK(app_timer_stop(adc_task_id));
     APP_ERROR_CHECK(app_timer_stop(filter_task_id));
-
-    // Clear fpga pins
-    for (int i = 0; i < 8; i++)
-    {
-        s1_fpga_pins.duty_cycle[i] = 0;
-    }
-    s1_fpga_io_update(&s1_fpga_pins);
     ecg_active = 0;
+    for (int i = 0; i < 8; i++)
+        s1_fpga_pins.duty_cycle[i] = 0;
+    s1_fpga_io_update(&s1_fpga_pins);
+
+    // nrf_gpio_cfg_input(20, NRF_GPIO_PIN_NOPULL);
+    // nrf_gpio_cfg_input(8, NRF_GPIO_PIN_NOPULL);
+    // nrf_gpio_cfg_input(11, NRF_GPIO_PIN_NOPULL);
+    // nrf_gpio_cfg_input(12, NRF_GPIO_PIN_NOPULL);
+    // nrf_gpio_cfg_input(15, NRF_GPIO_PIN_NOPULL);
+    fpga_boot_state = SLEEP;
     LOG("ecg sleep");
 }
 
@@ -414,15 +437,13 @@ void ecg_wake()
     LOG("ecg wake");
 }
 
-void in_pin_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
+void check_leads_off()
 {
     uint32_t lod = nrf_gpio_pin_read(GPIO2_PIN);
     if (fpga_boot_state > 3)
     {
-        if (lod && ecg_active)
+        if (lod)
             ecg_sleep();
-        else if (!lod && !ecg_active)
-            ecg_wake();
     }
 }
 
@@ -430,16 +451,19 @@ void lod_gpio_init(void)
 {
     ret_code_t err_code;
 
-    err_code = nrfx_gpiote_init();
-    APP_ERROR_CHECK(err_code);
+    nrf_gpio_cfg_sense_input(5, NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_SENSE_LOW);
+    // nrf_delay_ms(1);
 
-    nrfx_gpiote_in_config_t in_config = NRFX_GPIOTE_CONFIG_IN_SENSE_TOGGLE(true);
-    in_config.pull = NRF_GPIO_PIN_NOPULL;
+    // err_code = nrfx_gpiote_init();
+    // APP_ERROR_CHECK(err_code);
 
-    err_code = nrfx_gpiote_in_init(GPIO2_PIN, &in_config, in_pin_handler);
-    APP_ERROR_CHECK(err_code);
+    // nrfx_gpiote_in_config_t in_config = NRFX_GPIOTE_RAW_CONFIG_IN_SENSE_HITOLO(true);
+    // in_config.pull = NRF_GPIO_PIN_NOPULL;
 
-    nrfx_gpiote_in_event_enable(GPIO2_PIN, true);
+    // err_code = nrfx_gpiote_in_init(GPIO2_PIN, &in_config, in_pin_handler);
+    // APP_ERROR_CHECK(err_code);
+
+    // nrfx_gpiote_in_event_enable(GPIO2_PIN, true);
 }
 
 /**
@@ -464,6 +488,9 @@ int main(void)
     // Initialise the App Timer
     APP_ERROR_CHECK(app_timer_init());
     APP_SCHED_INIT(sizeof(uint32_t), 5);
+
+    // Initialise power management
+    APP_ERROR_CHECK(nrf_pwr_mgmt_init());
 
     // Initialise ADC
     saadc_init();
@@ -497,6 +524,6 @@ int main(void)
     // The CPU is free to do nothing in the meanwhile
     for (;;)
     {
-        __WFI();
+        nrf_pwr_mgmt_run();
     }
 }

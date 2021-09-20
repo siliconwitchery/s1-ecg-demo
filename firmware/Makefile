@@ -63,6 +63,8 @@ SRC_FILES += \
   $(SDK_ROOT)/components/libraries/util/app_error.c \
   $(SDK_ROOT)/components/libraries/util/app_util_platform.c \
   $(SDK_ROOT)/components/libraries/util/nrf_assert.c \
+  $(SDK_ROOT)/components/libraries/experimental_section_vars/nrf_section_iter.c \
+  $(SDK_ROOT)/components/libraries/pwr_mgmt/nrf_pwr_mgmt.c \
   $(SDK_ROOT)/external/fprintf/nrf_fprintf_format.c \
   $(SDK_ROOT)/external/fprintf/nrf_fprintf.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_printf.c \
@@ -96,6 +98,9 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/libraries/timer \
   $(SDK_ROOT)/components/libraries/strerror \
   $(SDK_ROOT)/components/libraries/util \
+  $(SDK_ROOT)/components/libraries/mutex \
+  $(SDK_ROOT)components/libraries/experimental_section_vars \
+  $(SDK_ROOT)/components/libraries/pwr_mgmt \
   $(SDK_ROOT)/components/toolchain/cmsis/include \
   $(SDK_ROOT)/external/fprintf \
   $(SDK_ROOT)/external/segger_rtt \
