@@ -61,6 +61,7 @@ void fpga_boot_task(void *p_context)
     uint8_t led_idx;
     const uint8_t STEP = 50;
     uint8_t flash_sleep_cmd = 0xB9;
+    uint8_t tx_buffer[2];
     switch (fpga_boot_state)
     {
     // Configure power and erase the flash
@@ -203,7 +204,18 @@ void fpga_boot_task(void *p_context)
 
     // Shutdown fpga on leads off
     case SLEEP:
-        if (fpga_spi_delay_counter == 300)
+        if (fpga_spi_delay_counter == 100)
+        {
+            tx_buffer[0] = 0xFF;
+            tx_buffer[1] = 0xFF;
+            s1_generic_spi_tx(&tx_buffer, 2);
+            s1_pmic_set_vaux(0.0);
+            s1_pmic_set_vio(0.0);
+            s1_pimc_fpga_vcore(false);
+            // s1_fpga_hold_reset();
+            LOG("FPGA shutdown");
+        }
+        else if (fpga_spi_delay_counter == 200)
         {
             // Put flash in deep sleep
             flash_tx_rx((uint8_t *)&flash_sleep_cmd, 1, NULL, 0);
@@ -211,14 +223,7 @@ void fpga_boot_task(void *p_context)
             NRFX_DELAY_US(2);
             // APP_ERROR_CHECK(app_timer_stop(fpga_boot_task_id));
         }
-        else if (fpga_spi_delay_counter == 600)
-        {
-            s1_pmic_set_vaux(0);
-            s1_pmic_set_vio(0.0);
-            s1_pimc_fpga_vcore(false);
-            LOG("FPGA core voltage shutdown");
-        }
-        else if (fpga_spi_delay_counter == 900)
+        else if (fpga_spi_delay_counter == 300)
         {
             nrf_pwr_mgmt_shutdown(NRF_PWR_MGMT_SHUTDOWN_GOTO_SYSOFF);
         }

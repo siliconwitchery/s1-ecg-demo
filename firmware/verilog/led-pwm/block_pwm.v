@@ -7,8 +7,8 @@ reg [7:0] counter = 0;
 
 always @(posedge clk) begin
     counter <= counter + 1;
-    if (counter > duty_cycle) pwm_out <= 0; 
-    else pwm_out <= 1;
+    if (counter < duty_cycle) pwm_out <= 1; 
+    else pwm_out <= 0;
 end
 
 endmodule

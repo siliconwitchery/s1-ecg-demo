@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-`include "block_clock.v"
+// `include "block_clock.v"
 
 module top (
            output wire D1,
@@ -12,26 +12,28 @@ module top (
            output wire D8
        );
 
-wire clk;
-reg led = 0;
-reg [21:0] count = 0;
+assign D3 = 1'b0;
 
-block_clock clk_src(
-                .clk(clk)
-            );
+// wire clk;
+// reg led = 0;
+// reg [21:0] count = 0;
 
-assign D8 = led;
-assign D7 = led;
-assign D1 = led;
-assign D4 = led;
-assign D3 = led;
-assign D2 = led;
-assign D5 = led;
-assign D6 = led;
+// block_clock clk_src(
+//                 .clk(clk)
+//             );
 
-always @(posedge clk) begin
-    if(count == 0) led <= ~led;
-    count <= count + 1;
-end
+// assign D8 = led;
+// assign D7 = led;
+// assign D1 = led;
+// assign D4 = led;
+// assign D3 = led;
+// assign D2 = led;
+// assign D5 = led;
+// assign D6 = led;
+
+// always @(posedge clk) begin
+//     if(count == 0) led <= ~led;
+//     count <= count + 1;
+// end
 
 endmodule
