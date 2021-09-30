@@ -88,7 +88,6 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/libraries/balloc \
   $(SDK_ROOT)/components/libraries/bsp \
   $(SDK_ROOT)/components/libraries/delay \
-  $(SDK_ROOT)/components/libraries/experimental_section_vars \
   $(SDK_ROOT)/components/libraries/log \
   $(SDK_ROOT)/components/libraries/log/src \
   $(SDK_ROOT)/components/libraries/memobj \
@@ -99,7 +98,6 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/libraries/strerror \
   $(SDK_ROOT)/components/libraries/util \
   $(SDK_ROOT)/components/libraries/mutex \
-  $(SDK_ROOT)components/libraries/experimental_section_vars \
   $(SDK_ROOT)/components/libraries/pwr_mgmt \
   $(SDK_ROOT)/components/toolchain/cmsis/include \
   $(SDK_ROOT)/external/fprintf \
@@ -195,7 +193,7 @@ sdk_config:
 # (https://github.com/FPGAwars/apio)
 
 build-verilog:
-	cd $(VERILOG_ROOT) && yosys -p "synth_ice40 -json hardware.json" $(TOP).v -q
+	cd $(VERILOG_ROOT) && yosys -p "synth_ice40 -json hardware.json" -f verilog -q $(TOP).v
 	cd $(VERILOG_ROOT) && nextpnr-ice40 --up5k --package uwg30 --json hardware.json --asc hardware.asc --pcf s1.pcf -q
 	cd $(VERILOG_ROOT) && icepack hardware.asc fpga_binfile.bin
 	# Use xxd to convert the bin into a c

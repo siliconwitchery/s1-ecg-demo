@@ -16,7 +16,7 @@
     "configurations": [
         {
             "cwd": "${workspaceRoot}",
-            "armToolchainPath": "${env:HOME}/Documents/SW/gcc-arm-none-eabi-10-2020-q4-major/bin",
+            "armToolchainPath": "/Applications/ARM/bin",
             "executable": "${workspaceFolder}/.build/s1-ecg-demo.out",
             "name": "JLink",
             "request": "launch",
@@ -28,7 +28,7 @@
                 "1"
             ],
             "runToMain": true,
-            "svdFile": "${env:HOME}/Documents/SW/nRF5_SDK_17.0.2_d674dde/modules/nrfx/mdk/nrf52811.svd",
+            "svdFile": "${env:HOME}/nRF5_SDK_17.0.2_d674dde/modules/nrfx/mdk/nrf52811.svd",
             "preLaunchTask": "Make project",
             "preLaunchCommands": [
                 "load"

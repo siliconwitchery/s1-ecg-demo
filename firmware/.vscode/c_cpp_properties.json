@@ -22,16 +22,16 @@
             "name": "ARM",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${env:HOME}/Documents/SW/nRF5_SDK_17.0.2_d674dde/components/**",
-                "${env:HOME}/Documents/SW/nRF5_SDK_17.0.2_d674dde/external/**",
-                "${env:HOME}/Documents/SW/nRF5_SDK_17.0.2_d674dde/integration/**",
-                "${env:HOME}/Documents/SW/nRF5_SDK_17.0.2_d674dde/modules/**",
-                "${env:HOME}/Documents/SW/s1-sdk/**"
+                "${env:HOME}/nRF5_SDK_17.0.2_d674dde/components/**",
+                "${env:HOME}/nRF5_SDK_17.0.2_d674dde/external/**",
+                "${env:HOME}/nRF5_SDK_17.0.2_d674dde/integration/**",
+                "${env:HOME}/nRF5_SDK_17.0.2_d674dde/modules/**",
+                "${env:HOME}/s1-sdk/**"
             ],
             "defines": [
                 "\"__STATIC_INLINE=static inline\""
             ],
-            "compilerPath": "${env:HOME}/Documents/SW/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc",
+            "compilerPath": "/Applications/ARM/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "gcc-arm"
