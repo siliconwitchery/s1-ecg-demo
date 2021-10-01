@@ -112,4 +112,7 @@ void ecg_wake();
  */
 void lod_gpio_init(void);
 
+/**
+ * @brief Checks leads off pin, if true, calls ecg_sleep
+ */
 void check_leads_off();
