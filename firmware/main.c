@@ -160,8 +160,6 @@ void fpga_boot_task(void *p_context)
         if (ecg_active)
         {
             led_idx = ceil(filtered_val / 585); // 7 sections
-            // led_idx = ceil((filtered_val - 2450) / 60); // 7 sections
-            // FIXME - hack to subtract min value
             if (led_idx > 7)
                 led_idx = 7;
             led_idx = 8 - led_idx; // flip the wave
@@ -226,6 +224,7 @@ void fpga_boot_task(void *p_context)
             // Put flash in deep sleep
             flash_tx_rx((uint8_t *)&flash_sleep_cmd, 1, NULL, 0);
             LOG("Flash deep sleep");
+            // Flash needs a delay after sleep command
             NRFX_DELAY_US(2);
             // APP_ERROR_CHECK(app_timer_stop(fpga_boot_task_id));
 #ifdef STEPPED_LPM
@@ -295,6 +294,7 @@ bool s1_fpga_crc_check()
         return false;
 }
 
+// Utility function to visualise ADC data as a vertical graph on debug print
 void graph_to_log(uint32_t value, uint32_t min, uint32_t max, uint8_t steps)
 {
     uint32_t idx = value / floor((max - min) / steps);
@@ -426,15 +426,10 @@ void ecg_sleep()
     APP_ERROR_CHECK(app_timer_stop(adc_task_id));
     APP_ERROR_CHECK(app_timer_stop(filter_task_id));
     ecg_active = 0;
+    // Set all LED duty cycle to 0
     for (int i = 0; i < 8; i++)
         s1_fpga_pins.duty_cycle[i] = 0;
     s1_fpga_io_update(&s1_fpga_pins);
-
-    // nrf_gpio_cfg_input(20, NRF_GPIO_PIN_NOPULL);
-    // nrf_gpio_cfg_input(8, NRF_GPIO_PIN_NOPULL);
-    // nrf_gpio_cfg_input(11, NRF_GPIO_PIN_NOPULL);
-    // nrf_gpio_cfg_input(12, NRF_GPIO_PIN_NOPULL);
-    // nrf_gpio_cfg_input(15, NRF_GPIO_PIN_NOPULL);
     fpga_boot_state = SLEEP;
     LOG("ecg sleep");
 }
@@ -467,18 +462,6 @@ void lod_gpio_init(void)
     ret_code_t err_code;
 
     nrf_gpio_cfg_sense_input(5, NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_SENSE_LOW);
-    // nrf_delay_ms(1);
-
-    // err_code = nrfx_gpiote_init();
-    // APP_ERROR_CHECK(err_code);
-
-    // nrfx_gpiote_in_config_t in_config = NRFX_GPIOTE_RAW_CONFIG_IN_SENSE_HITOLO(true);
-    // in_config.pull = NRF_GPIO_PIN_NOPULL;
-
-    // err_code = nrfx_gpiote_in_init(GPIO2_PIN, &in_config, in_pin_handler);
-    // APP_ERROR_CHECK(err_code);
-
-    // nrfx_gpiote_in_event_enable(GPIO2_PIN, true);
 }
 
 /**
