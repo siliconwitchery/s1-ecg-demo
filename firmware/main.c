@@ -26,6 +26,8 @@
  * OF THIS SOFTWARE.
  */
 
+// #define STEPPED_LPM
+
 #include "main.h"
 
 // Globals
@@ -204,8 +206,10 @@ void fpga_boot_task(void *p_context)
 
     // Shutdown fpga on leads off
     case SLEEP:
+#ifdef STEPPED_LPM
         if (fpga_spi_delay_counter == 100)
         {
+#endif
             tx_buffer[0] = 0xFF;
             tx_buffer[1] = 0xFF;
             s1_generic_spi_tx(&tx_buffer, 2);
@@ -214,21 +218,27 @@ void fpga_boot_task(void *p_context)
             s1_pimc_fpga_vcore(false);
             // s1_fpga_hold_reset();
             LOG("FPGA shutdown");
+#ifdef STEPPED_LPM
         }
         else if (fpga_spi_delay_counter == 200)
         {
+#endif
             // Put flash in deep sleep
             flash_tx_rx((uint8_t *)&flash_sleep_cmd, 1, NULL, 0);
             LOG("Flash deep sleep");
             NRFX_DELAY_US(2);
             // APP_ERROR_CHECK(app_timer_stop(fpga_boot_task_id));
+#ifdef STEPPED_LPM
         }
         else if (fpga_spi_delay_counter == 300)
         {
+#endif
             nrf_pwr_mgmt_shutdown(NRF_PWR_MGMT_SHUTDOWN_GOTO_SYSOFF);
+#ifdef STEPPED_LPM
         }
         LOG("%d", fpga_spi_delay_counter);
         fpga_spi_delay_counter++;
+#endif
         break;
 
     case SLEEPING:
