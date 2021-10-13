@@ -1,0 +1,5 @@
+(sym_lib_table
+  (lib (name s1-module)(type Legacy)(uri ${KIPRJMOD}/s1-module-lib/s1-module.lib)(options "")(descr ""))
+  (lib (name sw-logo)(type Legacy)(uri ${KIPRJMOD}/sw-logo.lib)(options "")(descr ""))
+  (lib (name s1-ecg-demo)(type Legacy)(uri ${KIPRJMOD}/s1-ecg-demo.lib)(options "")(descr ""))
+)

@@ -1,0 +1,103 @@
+// VS Code Build Scripts
+//
+// These are shortcuts for command line calls for building
+// or doing other useful "tasks" such as clean or erasinig.
+// By pressing Ctrl-Shift-B, or Cmd-Shift-B on MacOS, you
+// will run the default make task shown below. By pressing
+// Ctrl-Shift-P, or Cmd-Shift-P, and typing "Run Task", you
+// can select other tasks.
+//
+//
+// By default, these tasks build the fpga-blinky example.
+// Modify these for your own project.
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Make and flash project",
+            "command": "make",
+            "args": [
+                //"-j4", // For faster builds, set the number to your CPU core count
+                "flash",
+                "S1_SDK_ROOT=${workspaceFolder}/firmware/s1-sdk",
+                "SDK_ROOT=${HOME}/nRF5_SDK_17.0.2_d674dde",
+                "GNU_INSTALL_ROOT=${HOME}/gcc-arm-none-eabi-10-2020-q4-major/bin/",
+                "GNU_VERSION=10.2.1",
+                "GNU_PREFIX=arm-none-eabi"
+            ],
+            "problemMatcher": "$gcc",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Make project",
+            "command": "make",
+            "args": [
+                //"-j4", // For faster builds, set the number to your CPU core count
+                "S1_SDK_ROOT=${workspaceFolder}/firmware/s1-sdk",
+                "SDK_ROOT=${HOME}/nRF5_SDK_17.0.2_d674dde",
+                "GNU_INSTALL_ROOT=${HOME}/gcc-arm-none-eabi-10-2020-q4-major/bin/",
+                "GNU_VERSION=10.2.1",
+                "GNU_PREFIX=arm-none-eabi"
+            ],
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "Build verilog project",
+            "command": "make",
+            "args": [
+                "build-verilog",
+                "S1_SDK_ROOT=${workspaceFolder}/firmware/s1-sdk",
+                "VERILOG_ROOT=${workspaceFolder}/firmware/verilog/blinky",
+                "TOP=blinky"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Simulate verilog project",
+            "command": "make",
+            "args": [
+                "sim-verilog",
+                "S1_SDK_ROOT=${workspaceFolder}/firmware/s1-sdk",
+                "VERILOG_ROOT=${workspaceFolder}/firmware/verilog/blinky",
+                "TOP=blinky"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean",
+            "command": "make",
+            "args": [
+                "clean"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Erase",
+            "command": "make",
+            "args": [
+                "erase"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Reset",
+            "command": "make",
+            "args": [
+                "reset"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Fix verilog indentation",
+            "command": "iStyle",
+            "args": [
+                "${file}",
+                "--suffix=.old"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}

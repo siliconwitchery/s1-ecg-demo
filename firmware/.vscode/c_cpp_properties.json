@@ -1,0 +1,41 @@
+// VS Code Configuration for Intellisense checking.
+//
+// Find out about what intellisense does here:
+// https://code.visualstudio.com/docs/editor/intellisense
+//
+// Adjust this file for you own paths. "includePath"
+// should include the nordic SDK, S1 SDK, your project
+// files, and any external libraries you may use. The
+// ** includes all files recursivly from that folder.
+//
+// Be sure to set "compilerPath" to your ARM GCC install
+// path.
+//
+// Add defines for any macros which are specified within
+// the makefile or called from the command line after make.
+// Intellisense will only include pre-processor directives
+// found within .c and .h files, not from makefiles.
+//
+{
+    "configurations": [
+        {
+            "name": "ARM",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${env:HOME}/nRF5_SDK_17.0.2_d674dde/components/**",
+                "${env:HOME}/nRF5_SDK_17.0.2_d674dde/external/**",
+                "${env:HOME}/nRF5_SDK_17.0.2_d674dde/integration/**",
+                "${env:HOME}/nRF5_SDK_17.0.2_d674dde/modules/**",
+                "${env:HOME}/s1-sdk/**"
+            ],
+            "defines": [
+                "\"__STATIC_INLINE=static inline\""
+            ],
+            "compilerPath": "/Applications/ARM/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-arm"
+        }
+    ],
+    "version": 4
+}

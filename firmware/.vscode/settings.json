@@ -1,0 +1,10 @@
+{
+    "editor.formatOnSave": true,
+    "editor.rulers": [
+        80
+    ],
+    "files.associations": {
+        "s1.h": "c",
+        "sdk_config.h": "c"
+    }
+}

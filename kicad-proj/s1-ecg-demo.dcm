@@ -1,0 +1,12 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP AD8233
+F https://www.analog.com/media/en/technical-documentation/data-sheets/ad8233.pdf
+$ENDCMP
+#
+$CMP USB-C-16-Pin
+D USB-C Receptical 16 Piin USB 2.0 Data & Power
+F https://www.mouser.se/datasheet/2/206/JAE_Electronics_01282020_DX07-1729578.pdf
+$ENDCMP
+#
+#End Doc Library
