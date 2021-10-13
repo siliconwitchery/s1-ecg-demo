@@ -648,17 +648,6 @@ $EndComp
 Text Label 7200 4350 0    50   ~ 0
 Vusb
 $Comp
-L Device:Jumper_NC_Small JP1
-U 1 1 611AAD4D
-P 9900 5000
-F 0 "JP1" H 9900 4907 50  0000 C CNN
-F 1 "Jumper_NC_Small" V 9855 4953 50  0001 R CNN
-F 2 "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm" H 9900 5000 50  0001 C CNN
-F 3 "~" H 9900 5000 50  0001 C CNN
-	1    9900 5000
-	-1   0    0    -1  
-$EndComp
-$Comp
 L Mechanical:Fiducial FID1
 U 1 1 611C1B4D
 P 6150 6750
@@ -678,18 +667,6 @@ F 1 "Heartbeat icon" H 6235 7150 50  0000 L CNN
 F 2 "s1-ecg-demo:heartbeat" H 6150 7150 50  0001 C CNN
 F 3 "~" H 6150 7150 50  0001 C CNN
 	1    6150 7150
-	1    0    0    -1  
-$EndComp
-$Comp
-L s1-ecg-demo:TC2030 J2
-U 1 1 6118E478
-P 10000 2300
-F 0 "J2" H 10228 2641 50  0000 L CNN
-F 1 "TC2030" H 10228 2550 50  0000 L CNN
-F 2 "Connector:Tag-Connect_TC2030-IDC-NL_2x03_P1.27mm_Vertical" H 8200 3000 50  0001 C CNN
-F 3 "" H 8200 3000 50  0001 C CNN
-F 4 "Debug Port" H 10228 2459 50  0000 L CNN "Note"
-	1    10000 2300
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -741,30 +718,21 @@ Wire Wire Line
 	8800 1900 8850 1900
 Wire Wire Line
 	8850 2500 8800 2500
-Wire Wire Line
-	9750 5000 9750 4900
-Wire Wire Line
-	9750 5000 9800 5000
-Wire Wire Line
-	9750 4900 10100 4900
 $Comp
 L Connector_Generic:Conn_01x02 J5
 U 1 1 612E8F9F
 P 10300 4900
 F 0 "J5" H 10380 4892 50  0000 L CNN
-F 1 "Current Probe" H 10380 4801 50  0000 L CNN
+F 1 "Current Measure" H 10380 4801 50  0000 L CNN
 F 2 "s1-ecg-demo:Conn_2_SMD_2.54mm" H 10300 4900 50  0001 C CNN
 F 3 "~" H 10300 4900 50  0001 C CNN
 	1    10300 4900
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	10000 5000 10050 5000
-Wire Wire Line
 	10050 5000 10050 5300
 Wire Wire Line
 	10050 5300 10100 5300
-Connection ~ 10050 5000
 Wire Wire Line
 	10050 5000 10100 5000
 Wire Wire Line
@@ -1252,11 +1220,8 @@ F 3 "~" H 2850 3925 50  0001 C CNN
 	1    2850 3925
 	-1   0    0    1   
 $EndComp
-Text Notes 9950 5300 2    50   ~ 0
-Cut JP1 for current\nmeasurement
-Wire Wire Line
-	9650 4900 9750 4900
-Connection ~ 9750 4900
+Text Notes 10250 4800 0    50   ~ 0
+Remove jumper to\nmeasure current\nacross this header.
 $Comp
 L Device:R_Small R3
 U 1 1 61672E93
@@ -1288,4 +1253,18 @@ Wire Wire Line
 	7000 2250 7000 2200
 Wire Wire Line
 	7000 2500 7800 2500
+Wire Wire Line
+	9650 4900 10100 4900
+$Comp
+L s1-ecg-demo:TC2030 J2
+U 1 1 6118E478
+P 10000 2300
+F 0 "J2" H 10228 2641 50  0000 L CNN
+F 1 "TC2030" H 10228 2550 50  0000 L CNN
+F 2 "Connector:Tag-Connect_TC2030-IDC-NL_2x03_P1.27mm_Vertical" H 8200 3000 50  0001 C CNN
+F 3 "" H 8200 3000 50  0001 C CNN
+F 4 "Debug Port" H 10228 2459 50  0000 L CNN "Note"
+	1    10000 2300
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
