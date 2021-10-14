@@ -11,9 +11,9 @@ kicad-proj/bom/ibom.html
 # Firmware build files
 firmware/.build
 
-# VSCode temp files
-# .vscode
-# firmware/.vscode/tasks.json
-# firmware/.vscode/launch.json
-# firmware/.vscode/.cortex-debug.registers.state.json
-# firmware/.vscode/.cortex-debug.peripherals.state.json
+# VSCode files
+.vscode/*
+!.vscode/.clang-format
+!.vscode/c_cpp_properties_template.jsonc
+!.vscode/launch_template.jsonc
+!.vscode/tasks_template.jsonc

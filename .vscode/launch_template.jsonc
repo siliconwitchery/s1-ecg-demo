@@ -1,0 +1,35 @@
+// VS Code debug launcher script.
+
+// Make a copy of this file and adjust it to your needs. NOTE: Be sure to 
+// rename the extension from .jsonc to .json
+
+// For this to work, you will need the "Cortex-Debug" plugin by marus25, as well
+// as a JLink debugger and software installed.
+
+{
+    "configurations": [
+        {
+            "cwd": "${workspaceRoot}",
+            // Set your ARM GCC path here
+            "armToolchainPath": "/Applications/ARM/bin",
+            // Executable name should match your project build name
+            "executable": "${workspaceFolder}/firmware/.build/s1_ecg_demo.out",
+            "name": "JLink",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "jlink",
+            "device": "nRF52811_XXAA",
+            "serverArgs": [
+                "-AutoConnect",
+                "1"
+            ],
+            "runToMain": true,
+            // Set this path to the nRF SDK folder
+            "svdFile": "${env:HOME}/nRF5_SDK/modules/nrfx/mdk/nrf52811.svd",
+            "preLaunchTask": "Build nRF code",
+            "preLaunchCommands": [
+                "load"
+            ]
+        }
+    ]
+}

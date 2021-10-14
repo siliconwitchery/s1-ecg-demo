@@ -1,0 +1,32 @@
+// VS Code configuration for Intellisense.
+
+// Make a copy of this file and adjust it to your needs. NOTE: Be sure to 
+// rename the extension from .jsonc to .json
+
+{
+    "configurations": [{
+        "name": "ARM",
+        "includePath": [
+            "${workspaceFolder}/**",
+            // Set these paths to the nRF SDK folder
+            "${env:HOME}/nRF5_SDK/components/**",
+            "${env:HOME}/nRF5_SDK/external/**",
+            "${env:HOME}/nRF5_SDK/integration/**",
+            "${env:HOME}/nRF5_SDK/modules/**"
+        ],
+        "defines": [
+            // These includes should reflect both your Makefile and s1.mk
+            "\"DAPP_TIMER_V2\"",
+            "\"DAPP_TIMER_V2_RTC1_ENABLED\"",
+            "\"DFLOAT_ABI_SOFT\"",
+            "\"DNRF52811_XXAA\"",
+            "\"DNRFX_COREDEP_DELAY_US_LOOP_CYCLES=3\""
+        ],
+        // Set your ARM GCC path here
+        "compilerPath": "/Applications/ARM/bin/arm-none-eabi-gcc", 
+        "cStandard": "c11",
+        "cppStandard": "c++17",
+        "intelliSenseMode": "gcc-arm"
+    }],
+    "version": 4
+}
