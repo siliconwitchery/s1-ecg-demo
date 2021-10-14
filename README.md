@@ -1,14 +1,22 @@
-# S1 ECG Demo by Silicon Witchery
-
-Low cost and open-source, the S1 ECG kit is here to make heart research more accessible. The powerful
-analog frontend makes this board is an all-in-one kit to deploy and test algorithms with ease. Be that for teaching or research.
+# S1 ECG Reference Kit
 
 **Features:**
 
-- Pre-soldered S1 Module.
-- USB-C charging.
-- On board battery
-- Idle shut-off current 170uA*
+- Single chip frontend based on the [AD8233](https://www.analog.com/en/products/ad8233.html)
+- S1 Module with Bluetooth 5.2 and FPGA
+- Integrated lithium battery
+- Ultra low power auto-sleep down to 175uA
+- Open source design
+
+**Applications:**
+
+- Learning and teaching around heart health
+- Research of ML based ECG algorithms
+- Wireless ECG data logging
+- New product development
+
+A powerful analog frontend combined with the S1 Module makes this an all-in-one kit to deploy and test algorithms with ease. Be that for learning, research, or as the starting point for your next product.
+
 
 <br>
 
@@ -17,27 +25,58 @@ analog frontend makes this board is an all-in-one kit to deploy and test algorit
 
 <br>
 
-## All in one module
-The S1 ECG Board lets you quickly get started with all kinds of ECG based IoT projects. It features our **S1 Module** with:
+## Getting started
 
-- **Bluetooth 5.2** based on the Nordic nRF52811.
-- **iCE40 FPGA** with 5k LUT & DSP.
-- **Battery management** with charging and 3 adjustable voltage rails.
-- **32Mb SPI Flash** for storing your FPGA binary and other user data.
-- **Single Lead ECG** based on the AD8233 ECG front end
-    - Optional 3rd reference electrode
-    - Ultra low shutdown current
-    - Built in DC/AC leads off detection
+The S1 ECG reference kit uses a three probe measurement to determine heart activity. By holding the board with both hands, the device automatically wakes from sleep, and begins calibrating the amplifier sensitivity. After a few seconds, you will see your pulse displayed on the LED bar graph. Letting go of the terminals puts the system back into sleep mode.
 
-<br>
+The base firmware is highly expandable and a perfect starting point for new designs. To get started, clone this repository:
 
-## Battery & USB
+``` bash
+git clone --recurse-submodules https://github.com/siliconwitchery/s1-ecg-demo.git
+```
 
-You can use any single lithium polymer cell to power the Popout Board, or power it simply from a 5V USB Type C plug.
+You may need to follow the steps [here](https://github.com/siliconwitchery/s1-sdk) in order to set up the S1 SDK if you haven't already.
 
-Connecting the USB cable will also charge any connected battery. By default, the charge rate is low enough that even small cells can safely be charged, however for larger cells, the charge rate should be configured within firmware.
+To build the project, run make:
 
-In time we'll also be supporting USB data so you'll be able to talk to the FPGA over USB.
+``` bash
+make -C firmware/
+make flash -C firmware/
+```
+
+In order to flash the board. You will need a suitable SWD flasher such as a [JLink Edu Mini](https://www.digikey.se/product-detail/en/segger-microcontroller-systems/8-08-91-J-LINK-EDU-MINI/899-1061-ND/7387472), [nRF devkit](https://www.digikey.se/product-detail/en/segger-microcontroller-systems/8-08-91-J-LINK-EDU-MINI/899-1061-ND/7387472) or [Blackmagic probe](https://github.com/blacksphere/blackmagic/wiki).
+
+You will also need a Tag Connect TC2030-CTX [6 pin cable](https://www.digikey.se/product-detail/en/tag-connect-llc/TC2030-CTX/TC2030-CTX-ND/5023324).
+
+To learn more about the S1 Module. Visit our [documentation center](https://docs.siliconwitchery.com).
+
+
+## Hardware
+
+- [Schematic](https://github.com/siliconwitchery/s1-ecg-demo/blob/main/schematic.pdf)
+- [Bill of materials](https://github.com/siliconwitchery/s1-ecg-demo/blob/main/bill-of-materials.pdf)
+
+The design was produced in [KiCad v5.1](https://www.kicad.org/download/).
+
+## Measuring sleep current
+
+The board features a jumper disconnect to allow for the battery current to be directly measured. During sleep modes, this can be configured down to as low as 175uA or less, depending on the sleep state needed.
+
+Note that if the USB-C power cable is plugged in while measuring, the charge current to the battery will be measured rather than the discharge current.
+
+## Sensitivity of the ECG amplifier and EMI
+
+The ECG amplifier is designed to pick up the tiny signals across your hands. It's therefore quite sensitive to external interference. Operation solely from the lithium battery is ideal. Here the board remains isolated from other noise sources and accurate measurements can be made.
+
+Certain USB-C charges can induce a lot of EMI and ground loops can be created via the users hands. This may create noise in the measurement so it's worth keeping in mind when developing or logging data.
+
+## Looking after the battery
+
+**Lithium batteries are of course dangerous if improperly handled.** The S1 module features safety checks to avoid damage and such damage is unlikely. However it is possible to misconfigure the integrated power management IC to overcharge/undercharge or charge the lithium battery with too much current.
+
+It is recommended to only use the battery configuration provided in this example to ensure safety and lifetime of the lithium battery.
+
+If in doubt, it is possible to simply remove the battery current measurement jumper, and this will disconnect the battery from the system.
 
 ## Licence
 

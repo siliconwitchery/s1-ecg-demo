@@ -1,22 +1,14 @@
 # macOS temp files
 .DS_Store
 
-
-
+# PCB editor temp files
 kicad-proj/fp-info-cache
 kicad-proj/*.kicad_pcb-bak
 kicad-proj/*.sch-bak
 kicad-proj/*.bck
 kicad-proj/bom/ibom.html
 
-# PCB editor temp files
-electronics/fp-info-cache
-electronics/*.kicad_pcb-bak
-electronics/*.sch-bak
-electronics/*.bck
-electronics/bom/ibom.html
-
-
+# Verilog temp files
 *.fst
 *.old
 *.asc
@@ -24,22 +16,14 @@ electronics/bom/ibom.html
 *.ini
 *.vcd
 *.out
+
+# Firmware build files
 firmware/.build
-firmware/.vscode/tasks.json
-firmware/.vscode/.cortex-debug.peripherals.state.json
-firmware/.vscode/.cortex-debug.registers.state.json
-firmware/.vscode/launch.json
 firmware/fpga_binfile.h
 
-
-
-
-
-# Verilog temp files
-firmware/lifcl-40/*.log
-firmware/lifcl-40/*.bit
-firmware/lifcl-40/*.fasm
-firmware/lifcl-40/*.json
-
 # VSCode temp files
-firmware/.build
+.vscode
+firmware/.vscode/tasks.json
+firmware/.vscode/launch.json
+firmware/.vscode/.cortex-debug.registers.state.json
+firmware/.vscode/.cortex-debug.peripherals.state.json
