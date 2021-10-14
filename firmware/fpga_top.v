@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
-`include "block_clock.v"
-`include "block_spi_slave.v"
-`include "block_pwm.v"
+`include "fpga_clock.v"
+`include "fpga_pwm.v"
+`include "fpga_spi.v"
 
 module top(input SI,
            output SO,

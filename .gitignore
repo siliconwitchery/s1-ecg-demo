@@ -8,18 +8,8 @@ kicad-proj/*.sch-bak
 kicad-proj/*.bck
 kicad-proj/bom/ibom.html
 
-# Verilog temp files
-*.fst
-*.old
-*.asc
-*.dblite
-*.ini
-*.vcd
-*.out
-
 # Firmware build files
 firmware/.build
-firmware/fpga_binfile.h
 
 # VSCode temp files
 .vscode
