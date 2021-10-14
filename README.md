@@ -44,7 +44,7 @@ make -C firmware/
 make flash -C firmware/
 ```
 
-In order to flash the board. You will need a suitable SWD flasher such as a [JLink Edu Mini](https://www.digikey.se/product-detail/en/segger-microcontroller-systems/8-08-91-J-LINK-EDU-MINI/899-1061-ND/7387472), [nRF devkit](https://www.digikey.se/product-detail/en/segger-microcontroller-systems/8-08-91-J-LINK-EDU-MINI/899-1061-ND/7387472) or [Blackmagic probe](https://github.com/blacksphere/blackmagic/wiki).
+In order to flash the board. You will need a suitable SWD flasher such as a [JLink Edu Mini](https://www.digikey.se/product-detail/en/segger-microcontroller-systems/8-08-91-J-LINK-EDU-MINI/899-1061-ND/7387472), [nRF devkit](https://infocenter.nordicsemi.com/topic/ug_nrf52832_dk/UG/nrf52_DK/hw_debug_out.html) or [Blackmagic probe](https://github.com/blacksphere/blackmagic/wiki).
 
 You will also need a Tag Connect TC2030-CTX [6 pin cable](https://www.digikey.se/product-detail/en/tag-connect-llc/TC2030-CTX/TC2030-CTX-ND/5023324).
 
