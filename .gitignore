@@ -8,22 +8,12 @@ kicad-proj/*.sch-bak
 kicad-proj/*.bck
 kicad-proj/bom/ibom.html
 
-# Verilog temp files
-*.fst
-*.old
-*.asc
-*.dblite
-*.ini
-*.vcd
-*.out
-
 # Firmware build files
 firmware/.build
-firmware/fpga_binfile.h
 
-# VSCode temp files
-.vscode
-firmware/.vscode/tasks.json
-firmware/.vscode/launch.json
-firmware/.vscode/.cortex-debug.registers.state.json
-firmware/.vscode/.cortex-debug.peripherals.state.json
+# VSCode files
+.vscode/*
+!.vscode/.clang-format
+!.vscode/c_cpp_properties_template.jsonc
+!.vscode/launch_template.jsonc
+!.vscode/tasks_template.jsonc
