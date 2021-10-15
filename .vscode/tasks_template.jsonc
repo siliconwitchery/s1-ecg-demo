@@ -53,17 +53,6 @@
                 "reset"
             ],
             "problemMatcher": []
-        },
-        {
-            "label": "Fix verilog indentation",
-            "command": "iStyle",
-            "args": [
-                "-C",
-                "firmware",
-                "${file}",
-                "--suffix=.old"
-            ],
-            "problemMatcher": []
         }
     ]
 }
