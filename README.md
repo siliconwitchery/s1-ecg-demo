@@ -78,6 +78,10 @@ It is recommended to only use the battery configuration provided in this example
 
 If in doubt, it is possible to simply remove the battery current measurement jumper, and this will disconnect the battery from the system.
 
+## Bugs and improvements
+
+If you have any questions, or if something is unclear, feel free to create an [issue](https://github.com/siliconwitchery/s1-ecg-demo/issues) and we'll try our best to improve it.
+
 ## Licence
 
 **This design is released under the [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/) Licence.**
