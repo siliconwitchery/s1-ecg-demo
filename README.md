@@ -25,38 +25,43 @@ A powerful analog frontend combined with the S1 Module makes this an all-in-one 
 
 <br>
 
-## Getting started
+## Get the hardware
+
+We'll soon be launching our products with well known distributors. Keep an eye on this page, and we'll let you know as soon as the board is available.
+
+If you can't wait, you are free to build the hardware yourself. All the design files are open source and are available within this repository.
+
+- [Schematic](https://github.com/siliconwitchery/s1-ecg-demo/blob/main/schematic.pdf)
+- [Gerber files](https://github.com/siliconwitchery/s1-ecg-demo/tree/main/gerber-files/factory-version)
+- [Bill of materials](https://github.com/siliconwitchery/s1-ecg-demo/blob/main/bill-of-materials.pdf)
+
+The design is produced in [KiCad v5.1](https://www.kicad.org/download/).
+
+## Building the code
 
 The S1 ECG reference kit uses a three probe measurement to determine heart activity. By holding the board with both hands, the device automatically wakes from sleep, and begins calibrating the amplifier sensitivity. After a few seconds, you will see your pulse displayed on the LED bar graph. Letting go of the terminals puts the system back into sleep mode.
 
-The base firmware is highly expandable and a perfect starting point for new designs. To get started, clone this repository:
+The base firmware is highly expandable and a perfect starting point for new designs. To get started, begin by cloning this repository.
 
 ``` bash
 git clone --recurse-submodules https://github.com/siliconwitchery/s1-ecg-demo.git
+cd s1-ecg-demo
 ```
 
-You may need to follow the steps [here](https://github.com/siliconwitchery/s1-sdk) in order to set up the S1 SDK if you haven't already.
+If you haven't already, set up these [tools](https://github.com/siliconwitchery/s1-sdk/blob/main/README.md#setting-up-the-tools) in order to build the project.
 
-To build the project, run make:
+You should then be able to run `make`. *Be sure to include the path to your NRF SDK folder*.
 
 ``` bash
-make -C firmware/
-make flash -C firmware/
+make -C firmware build-verilog NRF_SDK_PATH=${HOME}/nRF5_SDK
+make -C firmware flash NRF_SDK_PATH=${HOME}/nRF5_SDK
 ```
 
-In order to flash the board. You will need a suitable SWD flasher such as a [JLink Edu Mini](https://www.digikey.se/product-detail/en/segger-microcontroller-systems/8-08-91-J-LINK-EDU-MINI/899-1061-ND/7387472), [nRF devkit](https://infocenter.nordicsemi.com/topic/ug_nrf52832_dk/UG/nrf52_DK/hw_debug_out.html) or [Blackmagic probe](https://github.com/blacksphere/blackmagic/wiki).
+The first `make` command will build the Verilog project, and convert the binary file into a header file. The nRF application transfers this binary to the FPGA after boot up. In your application, you could download this binary dynamically over Bluetooth rather than storing it within the flash of the nRF chip.
 
-You will also need a Tag Connect TC2030-CTX [6 pin cable](https://www.digikey.se/product-detail/en/tag-connect-llc/TC2030-CTX/TC2030-CTX-ND/5023324).
+The second `make` command builds the nRF code, and flashes the module using a J-Link debugger. You can also use an [nRF52 devkit](https://www.nordicsemi.com/Products/Development-hardware/nrf52-dk), or [JLink Edu Mini](https://www.digikey.se/product-detail/en/segger-microcontroller-systems/8-08-91-J-LINK-EDU-MINI/899-1061-ND/7387472) along with and [this](https://www.tag-connect.com/product/tc2030-ctx-nl-6-pin-no-legs-cable-with-10-pin-micro-connector-for-cortex-processors) 6pin cable to flash your board.
 
-To learn more about the S1 Module. Visit our [documentation center](https://docs.siliconwitchery.com).
-
-
-## Hardware
-
-- [Schematic](https://github.com/siliconwitchery/s1-ecg-demo/blob/main/schematic.pdf)
-- [Bill of materials](https://github.com/siliconwitchery/s1-ecg-demo/blob/main/bill-of-materials.pdf)
-
-The design was produced in [KiCad v5.1](https://www.kicad.org/download/).
+Once you're up and running, you can begin customizing the application to your needs. Be sure to visit our documentation center to learn more about the S1 Module, as well as its features.
 
 ## Measuring sleep current
 
