@@ -56,18 +56,6 @@
                 "NRF_SDK_PATH=${HOME}/nRF5_SDK"
             ],
             "problemMatcher": []
-        },
-        {
-            "label": "Fix verilog indentation",
-            "command": "iStyle",
-            "args": [
-                "-C",
-                "firmware",
-                "${file}",
-                "--suffix=.old",
-                "NRF_SDK_PATH=${HOME}/nRF5_SDK"
-            ],
-            "problemMatcher": []
         }
     ]
 }
