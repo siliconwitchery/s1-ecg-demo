@@ -30,7 +30,8 @@
             "args": [
                 "-C",
                 "firmware",
-                "build-verilog"
+                "build-verilog",
+                "NRF_SDK_PATH=${HOME}/nRF5_SDK"
             ],
             "problemMatcher": []
         },
@@ -40,7 +41,8 @@
             "args": [
                 "-C",
                 "firmware",
-                "clean"
+                "clean",
+                "NRF_SDK_PATH=${HOME}/nRF5_SDK"
             ],
             "problemMatcher": []
         },
@@ -50,7 +52,8 @@
             "args": [
                 "-C",
                 "firmware",
-                "reset"
+                "reset",
+                "NRF_SDK_PATH=${HOME}/nRF5_SDK"
             ],
             "problemMatcher": []
         }
