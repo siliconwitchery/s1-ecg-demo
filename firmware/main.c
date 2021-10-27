@@ -133,7 +133,7 @@ void fpga_boot_task(void *p_context)
                 // app_timer_stop(fpga_boot_task_id);
                 fpga_boot_state = UPDATE_PINS;
                 // TODO: add an IDLE state when fpga <-> nrf comms not needed
-                s1_generic_spi_init();
+                s1_generic_spi_init(NRF_SPIM_FREQ_125K);
                 lod_gpio_init();
                 LOG("FPGA started.");
                 ecg_wake();
@@ -262,7 +262,7 @@ void fpga_boot_task(void *p_context)
     case LOAD_FROM_FLASH:
         if (s1_fpga_is_booted())
         {
-            s1_generic_spi_init();
+            s1_generic_spi_init(NRF_SPIM_FREQ_125K);
             LOG("FPGA boot complete");
             fpga_boot_state = UPDATE_PINS;
         }

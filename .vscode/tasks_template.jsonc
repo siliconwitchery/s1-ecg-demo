@@ -13,7 +13,7 @@
                 "-C",
                 "firmware",
                 // For faster builds, set the number to how many cores you have.
-                "-j4",
+                "-j8",
                 // You can add argements which you'd like to pass to make.
                 "NRF_SDK_PATH=${HOME}/nRF5_SDK",
                 "GNU_INSTALL_ROOT=/Applications/ARM/bin/"
@@ -31,7 +31,8 @@
                 "-C",
                 "firmware",
                 "build-verilog",
-                "NRF_SDK_PATH=${HOME}/nRF5_SDK"
+                "NRF_SDK_PATH=${HOME}/nRF5_SDK",
+                "GNU_INSTALL_ROOT=/Applications/ARM/bin/"
             ],
             "problemMatcher": []
         },
@@ -52,10 +53,26 @@
             "args": [
                 "-C",
                 "firmware",
-                "reset",
-                "NRF_SDK_PATH=${HOME}/nRF5_SDK"
+                "reset"
             ],
             "problemMatcher": []
+        },
+        {
+            "label": "Make and flash project",
+            "command": "make",
+            "args": [
+                //"-j4", // For faster builds, set the number to your CPU core count
+                "-C",
+                "firmware",
+                "flash",
+                "NRF_SDK_PATH=${HOME}/nRF5_SDK",
+                "GNU_INSTALL_ROOT=/Applications/ARM/bin/"
+            ],
+            "problemMatcher": "$gcc",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }
