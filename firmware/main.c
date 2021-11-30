@@ -51,6 +51,47 @@ static uint32_t pages_remaining;
 static uint32_t page_address = 0x000000;
 
 s1_fpga_pins_t s1_fpga_pins;
+static const nrfx_spim_t spi = NRFX_SPIM_INSTANCE(0);
+
+void spi_init()
+{
+    // SPI hardware configuration
+    nrfx_spim_config_t spi_config = NRFX_SPIM_DEFAULT_CONFIG;
+    spi_config.mosi_pin = SPI_SO_PIN;
+    spi_config.miso_pin = SPI_SI_PIN;
+    spi_config.sck_pin = SPI_CLK_PIN;
+    spi_config.ss_pin = SPI_CS_PIN;
+    spi_config.frequency = NRF_SPIM_FREQ_125K;
+    spi_config.ss_active_high = 1; // Inverted CS
+
+    // Initialise the SPI if it was not already
+    APP_ERROR_CHECK(nrfx_spim_init(&spi, &spi_config, NULL, NULL));
+}
+
+void spi_tx(uint8_t *tx_buffer, uint8_t len)
+{
+    nrfx_spim_xfer_desc_t spi_xfer = NRFX_SPIM_XFER_TX(tx_buffer, len);
+    APP_ERROR_CHECK(nrfx_spim_xfer(&spi, &spi_xfer, 0));
+}
+
+void s1_fpga_io_init(s1_fpga_pins_t *s1_fpga_pins)
+{
+    spi_init();
+    // TODO: make fpga pin function configurable
+}
+
+void s1_fpga_io_update(s1_fpga_pins_t *s1_fpga_pins)
+{
+    static uint8_t tx_buffer[2];
+    for (int i = 0; i < 8; i++)
+    {
+        tx_buffer[0] = i; // pin numbering starts at 1
+        tx_buffer[1] = s1_fpga_pins->duty_cycle[i];
+        spi_tx(tx_buffer, 2);
+        // LOG_RAW("%d %d ", tx_buffer[0], tx_buffer[1]);
+    }
+    // LOG_RAW("\r\n");
+}
 
 /**
  * @brief Clock event callback. Not used but required to have.
@@ -133,7 +174,7 @@ void fpga_boot_task(void *p_context)
                 // app_timer_stop(fpga_boot_task_id);
                 fpga_boot_state = UPDATE_PINS;
                 // TODO: add an IDLE state when fpga <-> nrf comms not needed
-                s1_generic_spi_init(NRF_SPIM_FREQ_125K);
+                spi_init(NRF_SPIM_FREQ_125K);
                 lod_gpio_init();
                 LOG("FPGA started.");
                 ecg_wake();
@@ -210,7 +251,7 @@ void fpga_boot_task(void *p_context)
 #endif
             tx_buffer[0] = 0xFF;
             tx_buffer[1] = 0xFF;
-            s1_generic_spi_tx(&tx_buffer, 2);
+            spi_tx(&tx_buffer, 2);
             s1_pmic_set_vaux(0.0);
             s1_pmic_set_vio(0.0);
             s1_pimc_fpga_vcore(false);
@@ -262,7 +303,7 @@ void fpga_boot_task(void *p_context)
     case LOAD_FROM_FLASH:
         if (s1_fpga_is_booted())
         {
-            s1_generic_spi_init(NRF_SPIM_FREQ_125K);
+            spi_init(NRF_SPIM_FREQ_125K);
             LOG("FPGA boot complete");
             fpga_boot_state = UPDATE_PINS;
         }
@@ -449,7 +490,7 @@ void ecg_wake()
 
 void check_leads_off()
 {
-    uint32_t lod = nrf_gpio_pin_read(GPIO2_PIN);
+    uint32_t lod = nrf_gpio_pin_read(ADC2_PIN_AS_GPIO);
     if (fpga_boot_state > 3)
     {
         if (lod)
