@@ -112,6 +112,7 @@ void fpga_boot_task(void *p_context)
         s1_pimc_fpga_vcore(true);
         s1_pmic_set_vio(3.3);
         s1_pmic_set_vaux(3.3);
+        pmic_enable_charging();
         s1_fpga_hold_reset();
         s1_flash_wakeup();
         fpga_boot_state = CHECK_BIN_CRC;
