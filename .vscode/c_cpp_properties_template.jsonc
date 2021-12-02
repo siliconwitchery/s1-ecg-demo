@@ -16,11 +16,11 @@
         ],
         "defines": [
             // These includes should reflect both your Makefile and s1.mk
-            "\"DAPP_TIMER_V2\"",
-            "\"DAPP_TIMER_V2_RTC1_ENABLED\"",
-            "\"DFLOAT_ABI_SOFT\"",
-            "\"DNRF52811_XXAA\"",
-            "\"DNRFX_COREDEP_DELAY_US_LOOP_CYCLES=3\""
+            "DAPP_TIMER_V2",
+            "DAPP_TIMER_V2_RTC1_ENABLED",
+            "DFLOAT_ABI_SOFT",
+            "DNRF52811_XXAA",
+            "DNRFX_COREDEP_DELAY_US_LOOP_CYCLES=3"
         ],
         // Set your ARM GCC path here
         "compilerPath": "/Applications/ARM/bin/arm-none-eabi-gcc", 

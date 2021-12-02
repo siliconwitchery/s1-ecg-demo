@@ -51,6 +51,39 @@ static uint32_t pages_remaining;
 static uint32_t page_address = 0x000000;
 
 s1_fpga_pins_t s1_fpga_pins;
+static const nrfx_spim_t spi = NRFX_SPIM_INSTANCE(0);
+
+void spi_init()
+{
+    // SPI hardware configuration
+    nrfx_spim_config_t spi_config = NRFX_SPIM_DEFAULT_CONFIG;
+    spi_config.mosi_pin = SPI_SO_PIN;
+    spi_config.miso_pin = SPI_SI_PIN;
+    spi_config.sck_pin = SPI_CLK_PIN;
+    spi_config.ss_pin = SPI_CS_PIN;
+    spi_config.frequency = NRF_SPIM_FREQ_125K;
+    spi_config.ss_active_high = 1; // Inverted CS
+
+    // Initialise the SPI if it was not already
+    APP_ERROR_CHECK(nrfx_spim_init(&spi, &spi_config, NULL, NULL));
+}
+
+void spi_tx(uint8_t *tx_buffer, uint8_t len)
+{
+    nrfx_spim_xfer_desc_t spi_xfer = NRFX_SPIM_XFER_TX(tx_buffer, len);
+    APP_ERROR_CHECK(nrfx_spim_xfer(&spi, &spi_xfer, 0));
+}
+
+void s1_fpga_io_update(s1_fpga_pins_t *s1_fpga_pins)
+{
+    static uint8_t tx_buffer[2];
+    for (int i = 0; i < 8; i++)
+    {
+        tx_buffer[0] = i; // pin numbering starts at 1
+        tx_buffer[1] = s1_fpga_pins->duty_cycle[i];
+        spi_tx(tx_buffer, 2);
+    }
+}
 
 /**
  * @brief Clock event callback. Not used but required to have.
@@ -71,26 +104,27 @@ void fpga_boot_task(void *p_context)
         s1_pimc_fpga_vcore(true);
         s1_pmic_set_vio(3.3);
         s1_pmic_set_vaux(3.3);
+        s1_pmic_set_chg(4.2, 150.0);
         s1_fpga_hold_reset();
         s1_flash_wakeup();
         fpga_boot_state = CHECK_BIN_CRC;
         break;
 
+    // Check if the Flash has the correct FPGA binary, otherwise update it
     case CHECK_BIN_CRC:
         if (!s1_flash_is_busy())
         {
             if (s1_fpga_crc_check())
             {
-                LOG("CRC OK");
+                LOG("Flash already programmed. Booting.");
                 s1_fpga_boot();
                 fpga_boot_state = BOOTING;
             }
             else
             {
-                LOG("CRC mismatch");
+                LOG("Erasing flash. Takes up to 80 seconds.");
                 s1_flash_erase_all();
                 fpga_boot_state = ERASING;
-                LOG("Erasing flash. Takes up to 80 seconds.");
             }
         }
         break;
@@ -123,30 +157,19 @@ void fpga_boot_task(void *p_context)
         }
         break;
 
-    // Wait for CDONE pin to go high then stop the task
+    // Initialise the SPI after the delay while the FPGA boots
     case BOOTING:
         if (s1_fpga_is_booted())
         {
-            // Small delay here for fpga to setup
-            if (fpga_spi_delay_counter > 5)
-            {
-                // app_timer_stop(fpga_boot_task_id);
-                fpga_boot_state = UPDATE_PINS;
-                // TODO: add an IDLE state when fpga <-> nrf comms not needed
-                s1_generic_spi_init(NRF_SPIM_FREQ_125K);
-                lod_gpio_init();
-                LOG("FPGA started.");
-                ecg_wake();
-                fpga_spi_delay_counter = 0;
-            }
-            else
-            {
-                fpga_spi_delay_counter += 1;
-            }
+            LOG("FPGA started. Enabling ECG.");
+            fpga_boot_state = UPDATE_PINS;
+            spi_init(NRF_SPIM_FREQ_125K);
+            lod_gpio_init();
+            ecg_wake();
         }
         break;
 
-    // SPI pin data with fpga
+    // Send SPI data to the FPGA
     case UPDATE_PINS:
         for (int i = 0; i < 8; i++)
         {
@@ -159,11 +182,10 @@ void fpga_boot_task(void *p_context)
         }
         if (ecg_active)
         {
-            led_idx = ceil(filtered_val / 585); // 7 sections
+            led_idx = ceil(filtered_val / 585) + 1; // 7 sections plus offset
             if (led_idx > 7)
                 led_idx = 7;
             led_idx = 8 - led_idx; // flip the wave
-            LOG("%d %d", led_idx, filtered_val);
             s1_fpga_pins.duty_cycle[led_idx] = 255;
             s1_fpga_pins.duty_cycle[0] = 255;
 
@@ -204,47 +226,24 @@ void fpga_boot_task(void *p_context)
 
     // Shutdown fpga on leads off
     case SLEEP:
-#ifdef STEPPED_LPM
-        if (fpga_spi_delay_counter == 100)
-        {
-#endif
-            tx_buffer[0] = 0xFF;
-            tx_buffer[1] = 0xFF;
-            s1_generic_spi_tx(&tx_buffer, 2);
-            s1_pmic_set_vaux(0.0);
-            s1_pmic_set_vio(0.0);
-            s1_pimc_fpga_vcore(false);
-            // s1_fpga_hold_reset();
-            LOG("FPGA shutdown");
-#ifdef STEPPED_LPM
-        }
-        else if (fpga_spi_delay_counter == 200)
-        {
-#endif
-            // Put flash in deep sleep
-            flash_tx_rx((uint8_t *)&flash_sleep_cmd, 1, NULL, 0);
-            LOG("Flash deep sleep");
-            // Flash needs a delay after sleep command
-            NRFX_DELAY_US(2);
-            // APP_ERROR_CHECK(app_timer_stop(fpga_boot_task_id));
-#ifdef STEPPED_LPM
-        }
-        else if (fpga_spi_delay_counter == 300)
-        {
-#endif
-            nrf_pwr_mgmt_shutdown(NRF_PWR_MGMT_SHUTDOWN_GOTO_SYSOFF);
-#ifdef STEPPED_LPM
-        }
-        LOG("%d", fpga_spi_delay_counter);
-        fpga_spi_delay_counter++;
-#endif
+        LOG("Shutting down FPGA and flash.");
+        tx_buffer[0] = 0xFF;
+        tx_buffer[1] = 0xFF;
+        spi_tx(&tx_buffer, 2);
+        s1_pmic_set_vaux(0.0);
+        s1_pmic_set_vio(0.0);
+        s1_pimc_fpga_vcore(false);
+        flash_tx_rx((uint8_t *)&flash_sleep_cmd, 1, NULL, 0);
+        NRFX_DELAY_US(2); // Flash needs a delay after sleep command
+        nrf_pwr_mgmt_shutdown(NRF_PWR_MGMT_SHUTDOWN_GOTO_SYSOFF);
         break;
 
+    // Sleeping. We wake whenever the ECG amp gives the signal.
     case SLEEPING:
         if (ecg_active)
         {
             fpga_boot_state = WAKE;
-            LOG("FPGA wakeup seq initiated");
+            LOG("FPGA waking from sleep.");
         }
         break;
 
@@ -254,7 +253,6 @@ void fpga_boot_task(void *p_context)
         s1_pmic_set_vio(3.3);
         s1_pmic_set_vaux(3.3);
         s1_fpga_boot();
-        LOG("FPGA vcore on");
         fpga_boot_state = LOAD_FROM_FLASH;
         break;
 
@@ -262,8 +260,7 @@ void fpga_boot_task(void *p_context)
     case LOAD_FROM_FLASH:
         if (s1_fpga_is_booted())
         {
-            s1_generic_spi_init(NRF_SPIM_FREQ_125K);
-            LOG("FPGA boot complete");
+            spi_init(NRF_SPIM_FREQ_125K);
             fpga_boot_state = UPDATE_PINS;
         }
         break;
@@ -294,30 +291,6 @@ bool s1_fpga_crc_check()
         return false;
 }
 
-// Utility function to visualise ADC data as a vertical graph on debug print
-void graph_to_log(uint32_t value, uint32_t min, uint32_t max, uint8_t steps)
-{
-    uint32_t idx = value / floor((max - min) / steps);
-    // LOG_RAW("%d__|", idx);
-    LOG_RAW(" |");
-    if (idx > 0)
-    {
-        for (int i = 0; i < idx; i++)
-        {
-            LOG_RAW(" ");
-        }
-    }
-    LOG_RAW("*");
-    if (idx < steps)
-    {
-        for (int i = idx + 1; i < steps + 1; i++)
-        {
-            LOG_RAW(" ");
-        }
-    }
-    LOG_RAW("| %lu \r\n", value);
-}
-
 void saadc_callback(nrfx_saadc_evt_t const *p_event)
 {
     if (p_event->type == NRFX_SAADC_EVT_DONE)
@@ -336,11 +309,8 @@ void saadc_callback(nrfx_saadc_evt_t const *p_event)
         }
         adc_val = adc_val / SAMPLES_IN_BUFFER; // note adc_val is int
 
-        // TODO: Add ADC calibration here, clipping negatives to 0
         if (adc_val < 0)
             adc_val = 0;
-        // LOG("%u", adc_val);
-        // adc_val = 255 - (adc_val >> 4);
         m_adc_evt_counter++;
     }
 }
@@ -376,9 +346,6 @@ void saadc_init(void)
 
 void saadc_task(void *p_context)
 {
-    // LOG("# %u %d", m_adc_evt_counter, adc_val);
-    // graph_to_log((uint32_t)adc_val, 0, 4095, 10);
-
     ret_code_t err_code;
     err_code = nrfx_saadc_sample();
     APP_ERROR_CHECK(err_code);
@@ -399,24 +366,6 @@ void filter_task(void *p_context)
         filtered_val += buffer[i];
     }
     filtered_val = filtered_val / WINDOW_SIZE;
-    // LOG("%d", filtered_val);
-    // graph_to_log((uint32_t)filtered_val, 0, 4095, 10);
-
-    // FIR notch filter
-    // buffer[buff_idx] = adc_val;
-    // if (buff_idx == 64)
-    //     buff_idx = 0;
-    // else
-    //     buff_idx = buff_idx + 1;
-    // filtered_val = 0;
-    // for (int i = 0; i < 65; i++)
-    // {
-    //     if (i + buff_idx < 65)
-    //         filtered_val += buffer[i + buff_idx] * fir_coefs[i];
-    //     else
-    //         filtered_val += buffer[i + buff_idx - 65] * fir_coefs[i];
-    // }
-    // graph_to_log((uint32_t)filtered_val, 0, 4095, 10);
     check_leads_off();
 }
 
@@ -431,7 +380,6 @@ void ecg_sleep()
         s1_fpga_pins.duty_cycle[i] = 0;
     s1_fpga_io_update(&s1_fpga_pins);
     fpga_boot_state = SLEEP;
-    LOG("ecg sleep");
 }
 
 void ecg_wake()
@@ -444,12 +392,11 @@ void ecg_wake()
                                     APP_TIMER_TICKS(1),
                                     NULL));
     ecg_active = 1;
-    LOG("ecg wake");
 }
 
 void check_leads_off()
 {
-    uint32_t lod = nrf_gpio_pin_read(GPIO2_PIN);
+    uint32_t lod = nrf_gpio_pin_read(ADC2_PIN_AS_GPIO);
     if (fpga_boot_state > 3)
     {
         if (lod)
@@ -471,7 +418,7 @@ int main(void)
 {
     // Log some stuff about this project
     LOG_CLEAR();
-    LOG("S1 FPGA Blinky Demo – Built: %s %s – SDK Version: %s.",
+    LOG("S1 ECG Kit Demo – Built: %s %s – SDK Version: %s.",
         __DATE__,
         __TIME__,
         __S1_SDK_VERSION__);
@@ -506,7 +453,7 @@ int main(void)
                                      fpga_boot_task));
 
     APP_ERROR_CHECK(app_timer_start(fpga_boot_task_id,
-                                    APP_TIMER_TICKS(10),
+                                    APP_TIMER_TICKS(5),
                                     NULL));
 
     // Create timer for ADC

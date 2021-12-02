@@ -57,6 +57,48 @@ typedef enum
     CHECK_BIN_CRC
 } fpga_boot_state_t;
 
+typedef enum
+{
+    DISABLE,
+    INPUT,
+    OUTPUT,
+    PWM
+} s1_fpga_pin_mode;
+
+typedef struct
+{
+    s1_fpga_pin_mode pin_mode[8];
+    uint8_t duty_cycle[8];
+    uint8_t io_buf;
+} s1_fpga_pins_t;
+
+/**
+ * @brief Initializes SPI between nRF and FPGA.
+ */
+void spi_init();
+
+/**
+ * @brief Initializes fpga as io extender.
+ * 
+ * @param *tx_buffer: Pointer to uint8_t[] tx buffer
+ * @param len: Bytes to tx
+ */
+void spi_tx(uint8_t *tx_buffer, uint8_t len);
+
+/**
+ * @brief Initializes fpga as io extender.
+ * 
+ * @param s1_fpga_pins_t: Pin configuration struct
+ */
+void s1_fpga_io_init(s1_fpga_pins_t *s1_fpga_pins);
+
+/**
+ * @brief Updates GPIO state to fpga.
+ * 
+ * @param s1_fpga_pins_t: Pin configuration struct
+ */
+void s1_fpga_io_update(s1_fpga_pins_t *s1_fpga_pins);
+
 /**
  * @brief Check CRC match between flash and fpga binfile
  */
