@@ -45,10 +45,6 @@ INC_FOLDERS += \
   $(NRF_SDK_PATH)/components/libraries/mutex \
   $(NRF_SDK_PATH)/components/libraries/pwr_mgmt 
 
-# Add compile time options
-OPT += -flto 	# Link time optimization
-OPT += -g3 		# Debugging information (takes way more flash)
-
 # This is where the magic happens.
 include s1-sdk/s1.mk
 
@@ -71,9 +67,3 @@ build-verilog:
 
 	@echo "Appending the .h file to store binary in flash instead of ram."
 	@sed '1s/^/const /' $(OUTPUT_DIRECTORY)/fpga_binfile_ram.h > fpga_binfile.h
-
-# Build task to simulate the verilog using a test bench
-sim-verilog:
-	cd verilog && iverilog -o $(TOP)_tb.out -D VCD_OUTPUT=$(TOP)_tb cells_sim.v $(TOP)_tb.v
-	cd verilog && vvp $(TOP)_tb.out -fst
-	cd verilog && gtkwave $(TOP)_tb.fst
