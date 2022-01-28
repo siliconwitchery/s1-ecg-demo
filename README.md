@@ -27,15 +27,15 @@ A powerful analog frontend combined with the S1 Module makes this an all-in-one 
 
 ## Get the hardware
 
-We'll soon be launching our products with well known distributors. Keep an eye on this page, and we'll let you know as soon as the board is available.
+The ECG Kit is now available to buy on Digi-Key! Get it [here](https://www.digikey.com/en/products/detail/silicon-witchery/S1-ECG-KIT/15926538).
 
-If you can't wait, you are free to build the hardware yourself. All the design files are open source and are available within this repository.
+You're also free to build your own hardware using the design files in this repository. Everything is open source and ready to build upon.
 
 - [Schematic](https://github.com/siliconwitchery/s1-ecg-demo/blob/main/schematic.pdf)
 - [Gerber files](https://github.com/siliconwitchery/s1-ecg-demo/tree/main/gerber-files/factory-version)
 - [Bill of materials](https://github.com/siliconwitchery/s1-ecg-demo/blob/main/bill-of-materials.pdf)
 
-The design is produced in [KiCad v5.1](https://www.kicad.org/download/).
+The design is produced in [KiCad v6.0.1](https://www.kicad.org/download/).
 
 ## Building the code
 
