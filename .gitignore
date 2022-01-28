@@ -3,10 +3,7 @@
 
 # PCB editor temp files
 kicad-proj/fp-info-cache
-kicad-proj/*.kicad_pcb-bak
-kicad-proj/*.sch-bak
-kicad-proj/*.bck
-kicad-proj/bom/ibom.html
+kicad-proj/*-backups
 
 # Firmware build files
 firmware/.build

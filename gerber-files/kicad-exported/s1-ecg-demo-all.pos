@@ -1,0 +1,50 @@
+### Module positions - created on 2022 January 28, Friday 11:55:19 ###
+### Printed by Pcbnew version (6.0.0-0)
+## Unit = mm, Angle = deg.
+## Side : All
+# Ref     Val              Package                      PosX       PosY       Rot  Side
+J5        Current_Measure  Conn_2_SMD_2.54mm       -122.4500  -100.2000    0.0000  bottom
+C1        220nF            C_0402_1005Metric        147.8000  -103.7000  180.0000  top
+C2        220nF            C_0402_1005Metric        149.2000  -102.3000  -90.0000  top
+C3        1uF              C_0402_1005Metric        145.4000  -101.4000   90.0000  top
+C4        1nF              C_0402_1005Metric        149.4000  -108.0200   90.0000  top
+C5        100nF            C_0402_1005Metric        145.4000  -103.3000   90.0000  top
+C6        10uF             C_0402_1005Metric        144.3000  -103.3200   90.0000  top
+C7        22nF             C_0402_1005Metric        147.9000  -108.5000  180.0000  top
+C8        10nF             C_0402_1005Metric        145.6200  -107.6000    0.0000  top
+FID4      Fiducial         Fiducial_0.5mm_Mask1mm   158.2000  -117.9000    0.0000  top
+FID5      Fiducial         Fiducial_0.5mm_Mask1mm   120.1000   -89.3000    0.0000  top
+J6        USB-C-16-Pin     DX07S016JA1R1500         136.0000  -112.5000    0.0000  top
+LED1      LED              LED_0603_1608Metric      139.1958  -105.8000  180.0000  top
+LED2      LED              LED_0603_1608Metric      139.1958  -110.3000  180.0000  top
+LED3      LED              LED_0603_1608Metric      139.1958  -108.8000  180.0000  top
+LED4      LED              LED_0603_1608Metric      139.1958  -107.3000  180.0000  top
+LED5      LED              LED_0603_1608Metric      139.1958  -101.3000  180.0000  top
+LED6      LED              LED_0603_1608Metric      139.1958  -102.8000  180.0000  top
+LED7      LED              LED_0603_1608Metric      139.1958  -104.3000  180.0000  top
+MOD1      s1-module        s1-module                139.1742   -96.4000    0.0000  top
+R1        10M              R_0201_0603Metric        147.8000  -102.7000    0.0000  top
+R2        182k             R_0201_0603Metric        149.2000  -104.8000    0.0000  top
+R3        10M              R_0201_0603Metric        134.3000   -97.4000    0.0000  top
+R4        182k             R_0201_0603Metric        149.2000  -105.7000    0.0000  top
+R5        10M              R_0201_0603Metric        146.4000  -103.5000  -90.0000  top
+R6        10M              R_0201_0603Metric        149.2000  -106.6000  180.0000  top
+R7        10M              R_0201_0603Metric        150.4000  -105.3000  -90.0000  top
+R8        10M              R_0201_0603Metric        146.4000  -101.6000   90.0000  top
+R9        499k             R_0201_0603Metric        150.4000  -108.2000   90.0000  top
+R10       200k             R_0201_0603Metric        147.8000  -101.8000  180.0000  top
+R11       1M               R_0201_0603Metric        146.1000  -108.6000  180.0000  top
+R12       100k             R_0201_0603Metric        148.0000  -107.1000   90.0000  top
+R13       100k             R_0201_0603Metric        147.0000  -107.1000   90.0000  top
+R14       1M               R_0201_0603Metric        145.8000  -106.7000  180.0000  top
+R15       5.1k             R_0201_0603Metric        135.6800  -110.3000    0.0000  top
+R16       5.1k             R_0201_0603Metric        142.5200  -110.3000  180.0000  top
+R17       665R             R_0201_0603Metric        134.3000   -96.0000    0.0000  top
+R18       665R             R_0201_0603Metric        134.3000   -93.9000    0.0000  top
+R19       665R             R_0201_0603Metric        134.3000   -94.6000    0.0000  top
+R20       665R             R_0201_0603Metric        134.3000   -95.3000    0.0000  top
+R21       665R             R_0201_0603Metric        134.3000   -98.8000    0.0000  top
+R22       665R             R_0201_0603Metric        134.3000   -98.1000    0.0000  top
+R23       665R             R_0201_0603Metric        134.3000   -96.7000    0.0000  top
+U1        AD8233           WLCSP-20                 146.4000  -104.7000    0.0000  top
+## End

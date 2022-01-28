@@ -21,7 +21,7 @@ Plated via in pad:      Yes
 Copper      Layer                           Filename
 -----------------------------------------------------------------------
             Front paste                     s1-ecg-demo-F_Paste.gbr
-            Front silk                      s1-ecg-demo-F_SilkS.gbr
+            Front silk                      s1-ecg-demo-F_Silkscreen.gbr
             Front mask                      s1-ecg-demo-F_Mask.gbr
 1           Front copper                    s1-ecg-demo-F_Cu.gbr
             Laser drill 1-2                 s1-ecg-demo-front-in1.drl
@@ -29,9 +29,9 @@ Copper      Layer                           Filename
 3           Back inner copper               s1-ecg-demo-In2_Cu.gbr
 4           Back copper                     s1-ecg-demo-B_Cu.gbr
             Back mask                       s1-ecg-demo-B_Mask.gbr
-            Back silk                       s1-ecg-demo-B_SilkS.gbr
-            
-            Drill plated through hole       s1-ecg-demo-PTH.drl
-            Drill non-plated through hole   s1-ecg-demo-NPTH.drl
+            Back silk                       s1-ecg-demo-B_Silkscreen.gbr
+
+            Plated & non-plated drill holes s1-ecg-demo.drl
             Milling                         s1-ecg-demo-Edge_Cuts.gbr
 
+            Component position              s1-ecg-demo-all.pos

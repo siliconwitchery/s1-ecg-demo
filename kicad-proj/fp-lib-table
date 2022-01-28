@@ -1,4 +1,0 @@
-(fp_lib_table
-  (lib (name s1-module)(type KiCad)(uri ${KIPRJMOD}/s1-module-lib/s1-module.pretty)(options "")(descr ""))
-  (lib (name s1-ecg-demo)(type KiCad)(uri ${KIPRJMOD}/s1-ecg-demo.pretty)(options "")(descr ""))
-)
