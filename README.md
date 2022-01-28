@@ -27,7 +27,7 @@ A powerful analog frontend combined with the S1 Module makes this an all-in-one 
 
 ## Get the hardware
 
-The ECG Kit is now available to buy on Digi-Key! Get it [here](https://www.digikey.com/en/products/detail/silicon-witchery/S1-ECG-KIT/15926538).
+**Order the S1 ECG Kit from [Digi-Key](https://www.digikey.com/en/products/detail/silicon-witchery/S1-ECG-KIT/15926538) 🛍**
 
 You're also free to build your own hardware using the design files in this repository. Everything is open source and ready to build upon.
 
