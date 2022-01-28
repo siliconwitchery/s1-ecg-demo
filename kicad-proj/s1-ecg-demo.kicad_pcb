@@ -8,7 +8,7 @@
   (title_block
     (title "S1 ECG Demo")
     (date "2022-01-28")
-    (rev "2")
+    (rev "3")
     (company "Silicon Witchery AB")
     (comment 1 "Engineer: Rohit Nareshkumar")
     (comment 2 "https://creativecommons.org/licenses/by/4.0/")
