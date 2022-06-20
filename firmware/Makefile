@@ -1,7 +1,7 @@
-# S1 ECG Reference Kit Demo
-# -------------------------
 #
-# Copyright 2021 Silicon Witchery AB
+# S1 ECG Reference Kit Demo
+#
+# Copyright 2022 Silicon Witchery AB
 #
 # Permission to use, copy, modify, and/or distribute this 
 # software for any purpose with or without fee is hereby
@@ -18,10 +18,10 @@
 # ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
 # OF THIS SOFTWARE.
 #
-# -------------------------
 
 
 PROJECT_NAME = s1_ecg_demo
+S1_SDK_PATH = s1-sdk
 
 # Put the nRF SDK path here. If you don't have it, download it here:
 # https://www.nordicsemi.com/Products/Development-software/nRF5-SDK
@@ -46,7 +46,7 @@ INC_FOLDERS += \
   $(NRF_SDK_PATH)/components/libraries/pwr_mgmt 
 
 # This is where the magic happens.
-include s1-sdk/s1.mk
+include s1-sdk/Makefile
 
 # Build task for the verilog project
 build-verilog:

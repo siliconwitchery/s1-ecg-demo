@@ -1,28 +1,29 @@
 /**
  * @file  s1-ecg-demo/main.c
- * @brief Tiny ECG Application running on S1
- *        
- *        Includes basic configuration of the S1 module, and
- *        operations required to boot the FPGA. The FPGA 
- *        verilog project can be built by running:
- *           "make build-verilog" 
- *        from this folder.
- * 
- * @attention Copyright 2021 Silicon Witchery AB
  *
- * Permission to use, copy, modify, and/or distribute this 
+ * @brief Tiny ECG Application running on S1
+ *
+ *        Includes basic configuration of the S1 module, and
+ *        operations required to boot the FPGA. The FPGA
+ *        verilog project can be built by running:
+ *           "make build-verilog"
+ *        from this folder.
+ *
+ * @attention Copyright 2022 Silicon Witchery AB
+ *
+ * Permission to use, copy, modify, and/or distribute this
  * software for any purpose with or without fee is hereby
  * granted, provided that the above copyright notice and this
  * permission notice appear in all copies.
  *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS
- * ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO 
- * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, 
- * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER 
- * RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN 
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, 
- * ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+ * ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO
+ * EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+ * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+ * RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+ * ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
  * OF THIS SOFTWARE.
  */
 
@@ -79,7 +80,7 @@ void spi_init();
 
 /**
  * @brief Initializes fpga as io extender.
- * 
+ *
  * @param *tx_buffer: Pointer to uint8_t[] tx buffer
  * @param len: Bytes to tx
  */
@@ -87,14 +88,14 @@ void spi_tx(uint8_t *tx_buffer, uint8_t len);
 
 /**
  * @brief Initializes fpga as io extender.
- * 
+ *
  * @param s1_fpga_pins_t: Pin configuration struct
  */
 void s1_fpga_io_init(s1_fpga_pins_t *s1_fpga_pins);
 
 /**
  * @brief Updates GPIO state to fpga.
- * 
+ *
  * @param s1_fpga_pins_t: Pin configuration struct
  */
 void s1_fpga_io_update(s1_fpga_pins_t *s1_fpga_pins);
