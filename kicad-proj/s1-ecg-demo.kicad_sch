@@ -6,13 +6,12 @@
 
   (title_block
     (title "S1 ECG Demo")
-    (date "2022-01-28")
+    (date "2022-12-12")
     (rev "3")
     (company "Silicon Witchery AB")
     (comment 1 "Engineer: Rohit Nareshkumar")
-    (comment 2 "https://creativecommons.org/licenses/by/4.0/")
-    (comment 3 "Attribution 4.0 International License")
-    (comment 4 "Released under the Creative Commons")
+    (comment 3 "Licenced under: CERN OHL-P-v2")
+    (comment 4 "Copyright 2022 © Silicon Witchery")
   )
 
   (lib_symbols
