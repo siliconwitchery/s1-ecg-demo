@@ -89,4 +89,6 @@ If you have any questions, or if something is unclear, feel free to create an [i
 
 ## Licence
 
+Copyright 2022 © Silicon Witchery.
+
 This design is licenced under: [CERN Open Hardware Licence Version 2 - Permissive](https://ohwr.org/cern_ohl_p_v2.pdf).
